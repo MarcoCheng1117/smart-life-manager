@@ -14,18 +14,17 @@ import {
   InputLabel,
   Select,
   MenuItem,
-  Checkbox,
-  FormControlLabel
+  Checkbox
 } from '@mui/material';
 import {
   Add,
   Delete,
-  Edit,
   CheckCircle,
   RadioButtonUnchecked,
   Flag,
   Schedule
 } from '@mui/icons-material';
+import { backgroundColors } from '../theme';
 
 const TaskManager = () => {
   const [tasks, setTasks] = useState([]);
@@ -114,12 +113,17 @@ const TaskManager = () => {
 
   return (
     <Box sx={{ p: 3, maxWidth: 1000, mx: 'auto' }}>
-      <Typography variant="h4" gutterBottom sx={{ mb: 3 }}>
+      <Typography variant="h2" gutterBottom sx={{ mb: 3 }}>
         Task Manager
       </Typography>
 
       {/* Add Task Form */}
-      <Paper sx={{ p: 3, mb: 3 }}>
+      <Paper sx={{ 
+        p: 3, 
+        mb: 3,
+        backgroundColor: backgroundColors.bg1,
+        border: '1px solid rgba(94, 82, 64, 0.12)'
+      }}>
         <Grid container spacing={2} alignItems="center">
           <Grid item xs={12} md={4}>
             <TextField
@@ -168,6 +172,12 @@ const TaskManager = () => {
               onClick={addTask}
               disabled={!newTask.trim()}
               startIcon={<Add />}
+              sx={{
+                bgcolor: 'primary.main',
+                '&:hover': {
+                  bgcolor: 'primary.dark',
+                }
+              }}
             >
               Add Task
             </Button>
@@ -201,7 +211,12 @@ const TaskManager = () => {
           </FormControl>
         </Grid>
         <Grid item xs={12} md={3}>
-          <Paper sx={{ p: 2, textAlign: 'center' }}>
+          <Paper sx={{ 
+            p: 2, 
+            textAlign: 'center',
+            backgroundColor: backgroundColors.bg2,
+            border: '1px solid rgba(94, 82, 64, 0.12)'
+          }}>
             <Typography variant="body2" color="text.secondary">
               {pendingCount} pending, {completedCount} completed
             </Typography>
@@ -213,8 +228,13 @@ const TaskManager = () => {
       <Grid container spacing={2}>
         {filteredTasks.length === 0 ? (
           <Grid item xs={12}>
-            <Paper sx={{ p: 4, textAlign: 'center' }}>
-              <Typography variant="h6" color="text.secondary">
+            <Paper sx={{ 
+              p: 4, 
+              textAlign: 'center',
+              backgroundColor: backgroundColors.bg4,
+              border: '1px solid rgba(94, 82, 64, 0.12)'
+            }}>
+              <Typography variant="h5" color="text.secondary">
                 {searchTerm || filter !== 'all' 
                   ? 'No tasks match your criteria' 
                   : 'No tasks yet. Add your first task above!'}
@@ -222,12 +242,19 @@ const TaskManager = () => {
             </Paper>
           </Grid>
         ) : (
-          filteredTasks.map((task) => (
+          filteredTasks.map((task, index) => (
             <Grid item xs={12} key={task.id}>
               <Card 
                 sx={{ 
                   opacity: task.completed ? 0.7 : 1,
-                  border: task.priority === 'high' ? '2px solid #f44336' : '1px solid #e0e0e0'
+                  border: task.priority === 'high' ? '2px solid #C0152F' : '1px solid rgba(94, 82, 64, 0.12)',
+                  backgroundColor: index % 3 === 0 ? backgroundColors.bg3 :
+                                 index % 3 === 1 ? backgroundColors.bg5 :
+                                 backgroundColors.bg8,
+                  transition: 'transform 250ms cubic-bezier(0.16, 1, 0.3, 1)',
+                  '&:hover': {
+                    transform: 'translateY(-2px)',
+                  }
                 }}
               >
                 <CardContent>
@@ -242,7 +269,7 @@ const TaskManager = () => {
                     </Grid>
                     <Grid item xs={12} md={6}>
                       <Typography 
-                        variant="h6" 
+                        variant="h5" 
                         sx={{ 
                           textDecoration: task.completed ? 'line-through' : 'none',
                           color: task.completed ? 'text.secondary' : 'text.primary'
@@ -275,6 +302,11 @@ const TaskManager = () => {
                         onClick={() => deleteTask(task.id)}
                         color="error"
                         size="small"
+                        sx={{
+                          '&:hover': {
+                            backgroundColor: 'rgba(192, 21, 47, 0.08)',
+                          }
+                        }}
                       >
                         <Delete />
                       </IconButton>
