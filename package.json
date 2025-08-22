@@ -1,20 +1,22 @@
 {
   "name": "smart-life-manager",
   "version": "1.0.0",
-  "description": "Smart Life Manager - Full-stack life management application",
-  "private": true,
+  "description": "A comprehensive life management application built with React, Node.js, and modern web technologies",
+  "main": "index.js",
   "workspaces": [
     "client",
     "server"
   ],
   "scripts": {
-    "dev": "concurrently \"npm run dev:server\" \"npm run dev:client\"",
-    "dev:server": "cd server && npm run dev",
+    "install:all": "npm install && npm run install:client && npm run install:server",
+    "install:client": "cd client && npm install",
+    "install:server": "cd server && npm install",
+    "dev": "concurrently \"npm run dev:client\" \"npm run dev:server\"",
     "dev:client": "cd client && npm start",
+    "dev:server": "cd server && npm run dev",
     "build": "npm run build:client && npm run build:server",
     "build:client": "cd client && npm run build",
     "build:server": "cd server && npm run build",
-    "start": "cd server && npm start",
     "test": "npm run test:client && npm run test:server",
     "test:client": "cd client && npm test",
     "test:server": "cd server && npm test",
@@ -24,11 +26,29 @@
     "format": "npm run format:client && npm run format:server",
     "format:client": "cd client && npm run format",
     "format:server": "cd server && npm run format",
-    "install:all": "npm install && cd client && npm install && cd ../server && npm install",
-    "clean": "rm -rf node_modules client/node_modules server/node_modules client/build",
     "security:audit": "npm audit && cd client && npm audit && cd ../server && npm audit",
-    "security:fix": "npm audit fix && cd client && npm audit fix && cd ../server && npm audit fix"
+    "clean": "npm run clean:client && npm run clean:server",
+    "clean:client": "cd client && rm -rf node_modules package-lock.json build",
+    "clean:server": "cd server && rm -rf node_modules package-lock.json dist",
+    "clean:all": "rm -rf node_modules package-lock.json && npm run clean",
+    "start": "cd server && npm start",
+    "heroku-postbuild": "npm run build:client"
   },
+  "keywords": [
+    "life-management",
+    "productivity",
+    "task-management",
+    "goals",
+    "health-tracking",
+    "finance-tracking",
+    "react",
+    "nodejs",
+    "express",
+    "material-ui",
+    "progressive-web-app"
+  ],
+  "author": "Smart Life Manager Team",
+  "license": "MIT",
   "devDependencies": {
     "concurrently": "^8.2.2"
   },
@@ -40,22 +60,21 @@
     "type": "git",
     "url": "https://github.com/yourusername/smart-life-manager.git"
   },
-  "keywords": [
-    "life-management",
-    "productivity",
-    "task-management",
-    "goal-tracking",
-    "health-tracking",
-    "finance-tracking",
-    "react",
-    "nodejs",
-    "cookies",
-    "express"
-  ],
-  "author": "Your Name",
-  "license": "MIT",
   "bugs": {
     "url": "https://github.com/yourusername/smart-life-manager/issues"
   },
-  "homepage": "https://github.com/yourusername/smart-life-manager#readme"
+  "homepage": "https://yourusername.github.io/smart-life-manager",
+  "dependencies": {},
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
+  }
 } 

@@ -1,615 +1,465 @@
-# Contributing to Smart Life Manager 🤝
+# 🤝 Contributing to Smart Life Manager
 
 Thank you for your interest in contributing to Smart Life Manager! This document provides guidelines and information for contributors.
 
-## 📋 Table of Contents
+## 🚀 Quick Start
 
-- [Getting Started](#getting-started)
-- [Development Setup](#development-setup)
-- [Code Standards](#code-standards)
-- [Contributing Guidelines](#contributing-guidelines)
-- [Testing](#testing)
-- [Pull Request Process](#pull-request-process)
-- [Code Review](#code-review)
-- [Documentation](#documentation)
-- [Community Guidelines](#community-guidelines)
+### **Before You Begin**
+1. **Fork the repository** on GitHub
+2. **Clone your fork** locally
+3. **Install dependencies** with `npm run install:all`
+4. **Start development** with `npm run dev`
 
-## 🚀 Getting Started
+### **Making Changes**
+1. **Create a feature branch** from `main`
+2. **Make your changes** following our coding standards
+3. **Test thoroughly** before submitting
+4. **Commit with clear messages** using conventional commits
+5. **Push and create a pull request**
 
-### Prerequisites
-- **Node.js** 18+ and **npm** 9+
-- **Git** for version control
-- **MongoDB** 6+ (local or cloud)
-- **Docker** (optional, for containerized development)
+## 📋 Contribution Types
 
-### First Steps
-1. **Fork** the repository on GitHub
-2. **Clone** your fork locally
-3. **Set up** the development environment
-4. **Create** a feature branch
-5. **Make** your changes
-6. **Test** thoroughly
-7. **Submit** a pull request
+### **Code Contributions**
+- **Bug fixes** - Fix issues and improve reliability
+- **New features** - Add functionality users need
+- **Performance improvements** - Optimize existing code
+- **Refactoring** - Improve code structure and readability
+- **Documentation** - Update docs and add examples
+
+### **Non-Code Contributions**
+- **Bug reports** - Help identify issues
+- **Feature requests** - Suggest new functionality
+- **Documentation** - Improve guides and tutorials
+- **Testing** - Test features and report issues
+- **Design feedback** - Improve user experience
 
 ## 🛠️ Development Setup
 
-### 1. Fork and Clone
+### **Prerequisites**
+- **Node.js 18+** and **npm 8+**
+- **Git** for version control
+- **Modern browser** for testing
+- **Code editor** (VS Code recommended)
+
+### **Local Development**
 ```bash
-# Fork the repository on GitHub first, then:
-git clone https://github.com/YOUR_USERNAME/smart-life-manager.git
+# Clone and setup
+git clone https://github.com/yourusername/smart-life-manager.git
 cd smart-life-manager
-git remote add upstream https://github.com/ORIGINAL_OWNER/smart-life-manager.git
-```
 
-### 2. Install Dependencies
-```bash
-# Frontend dependencies
-cd client
-npm install
+# Install dependencies
+npm run install:all
 
-# Backend dependencies
-cd ../server
-npm install
-```
-
-### 3. Environment Configuration
-```bash
-# Frontend
-cd client
-cp .env.example .env
-# Edit .env with your configuration
-
-# Backend
-cd ../server
-cp .env.example .env
-# Edit .env with your configuration
-```
-
-### 4. Database Setup
-```bash
-# Start MongoDB (local)
-mongod
-
-# Or using Docker
-docker run -d -p 27017:27017 --name mongodb mongo:latest
-```
-
-### 5. Start Development Servers
-```bash
-# Terminal 1 - Backend
-cd server
+# Start development
 npm run dev
 
-# Terminal 2 - Frontend
-cd client
-npm start
+# Open browser
+# Frontend: http://localhost:3000
+# Backend: http://localhost:5000
 ```
 
-## 📝 Code Standards
+### **Available Scripts**
+```bash
+# Development
+npm run dev              # Start both frontend and backend
+npm run dev:client       # Start frontend only
+npm run dev:server       # Start backend only
 
-### JavaScript/React Standards
+# Building
+npm run build            # Build both frontend and backend
+npm run build:client     # Build frontend only
+npm run build:server     # Build backend only
 
-#### General Rules
-- Use **ES6+** features when possible
-- Prefer **const** and **let** over **var**
-- Use **arrow functions** for consistency
-- Implement **proper error handling**
-- Add **JSDoc comments** for complex functions
+# Testing
+npm run test             # Run all tests
+npm run test:client      # Run frontend tests
+npm run test:server      # Run backend tests
 
-#### React Components
+# Code Quality
+npm run lint             # Lint all code
+npm run format           # Format all code
+npm run security:audit   # Security audit
+```
+
+## 📁 Project Structure
+
+### **Frontend (client/)**
+```
+client/src/
+├── components/          # Reusable UI components
+│   ├── auth/           # Authentication components
+│   ├── dashboard/      # Dashboard and charts
+│   ├── goals/          # Goals management
+│   ├── health/         # Health tracking
+│   ├── finance/        # Finance management
+│   └── ui/             # Basic UI elements
+├── contexts/           # React contexts
+├── hooks/              # Custom React hooks
+├── utils/              # Utility functions
+├── theme.js            # Material-UI theme
+└── App.js              # Main application
+```
+
+### **Backend (server/)**
+```
+server/src/
+├── config/             # Configuration files
+├── controllers/        # Route controllers
+├── models/             # Data models
+├── routes/             # API routes
+├── middlewares/        # Custom middleware
+├── utils/              # Utility functions
+└── app.js              # Main server file
+```
+
+## 🎯 Development Guidelines
+
+### **Code Standards**
+
+#### **JavaScript/React**
+- Use **functional components** with hooks
+- Follow **React best practices** and patterns
+- Use **TypeScript** for new components (optional but recommended)
+- Implement **proper error handling** and loading states
+- Use **semantic HTML** and accessibility features
+
+#### **Component Structure**
 ```jsx
-// ✅ Good - Functional component with hooks
 import React, { useState, useEffect } from 'react';
-import PropTypes from 'prop-types';
+import { Box, Typography } from '@mui/material';
 
-const MyComponent = ({ title, onAction }) => {
-  const [state, setState] = useState(null);
-
+/**
+ * Component description
+ * @param {Object} props - Component props
+ * @param {string} props.title - Component title
+ * @returns {JSX.Element} Rendered component
+ */
+const ExampleComponent = ({ title }) => {
+  // State and hooks
+  const [data, setData] = useState(null);
+  
+  // Effects
   useEffect(() => {
     // Effect logic
   }, []);
-
+  
+  // Event handlers
   const handleClick = () => {
-    onAction(state);
+    // Handler logic
   };
-
+  
+  // Render
   return (
-    <div className="my-component">
-      <h2>{title}</h2>
-      <button onClick={handleClick}>Action</button>
-    </div>
+    <Box>
+      <Typography variant="h5">{title}</Typography>
+    </Box>
   );
 };
 
-MyComponent.propTypes = {
-  title: PropTypes.string.isRequired,
-  onAction: PropTypes.func.isRequired,
-};
-
-export default MyComponent;
+export default ExampleComponent;
 ```
 
-#### File Naming
-- **Components**: PascalCase (e.g., `UserProfile.js`)
-- **Hooks**: camelCase with `use` prefix (e.g., `useAuth.js`)
+#### **File Naming**
+- **Components**: PascalCase (e.g., `TaskManager.js`)
 - **Utilities**: camelCase (e.g., `formatDate.js`)
 - **Constants**: UPPER_SNAKE_CASE (e.g., `API_ENDPOINTS.js`)
+- **Files**: kebab-case for multi-word (e.g., `task-form.js`)
 
-### CSS/Styling Standards
+### **State Management**
+- Use **React Context** for global state (authentication, user data)
+- Use **local state** for component-specific data
+- Use **localStorage** for data persistence
+- Consider **Redux Toolkit** for complex state (future)
 
-#### Material-UI (MUI) Usage
+### **Styling Guidelines**
+- Use **Material-UI components** as primary UI elements
+- Follow **custom theme** defined in `theme.js`
+- Use **CSS-in-JS** with Material-UI's `sx` prop
+- Maintain **responsive design** for all screen sizes
+- Follow **accessibility** best practices
+
+### **Error Handling**
 ```jsx
-// ✅ Good - Using MUI components and sx prop
-import { Box, Button, Typography } from '@mui/material';
+// Good error handling
+const [error, setError] = useState(null);
+const [isLoading, setIsLoading] = useState(false);
 
-const StyledComponent = () => (
-  <Box
-    sx={{
-      display: 'flex',
-      flexDirection: 'column',
-      gap: 2,
-      p: 3,
-      backgroundColor: 'background.paper',
-      borderRadius: 2,
-    }}
-  >
-    <Typography variant="h4" component="h1">
-      Title
-    </Typography>
-    <Button variant="contained" color="primary">
-      Action
-    </Button>
-  </Box>
-);
+try {
+  setIsLoading(true);
+  setError(null);
+  const result = await apiCall();
+  setData(result);
+} catch (err) {
+  setError(err.message || 'An error occurred');
+} finally {
+  setIsLoading(false);
+}
+
+// Display error state
+if (error) {
+  return <Alert severity="error">{error}</Alert>;
+}
 ```
-
-#### Custom Styles
-```jsx
-// ✅ Good - Using theme-aware styling
-const useStyles = makeStyles((theme) => ({
-  root: {
-    padding: theme.spacing(2),
-    backgroundColor: theme.palette.background.default,
-  },
-  title: {
-    color: theme.palette.primary.main,
-    marginBottom: theme.spacing(2),
-  },
-}));
-```
-
-### Backend Standards
-
-#### Express.js Structure
-```javascript
-// ✅ Good - Controller structure
-const TaskController = {
-  // Get all tasks
-  async getAllTasks(req, res, next) {
-    try {
-      const tasks = await Task.find({ userId: req.user.id });
-      res.json({
-        success: true,
-        data: tasks,
-        count: tasks.length,
-      });
-    } catch (error) {
-      next(error);
-    }
-  },
-
-  // Create new task
-  async createTask(req, res, next) {
-    try {
-      const taskData = {
-        ...req.body,
-        userId: req.user.id,
-        createdAt: new Date(),
-      };
-      
-      const task = await Task.create(taskData);
-      res.status(201).json({
-        success: true,
-        data: task,
-      });
-    } catch (error) {
-      next(error);
-    }
-  },
-};
-```
-
-#### Error Handling
-```javascript
-// ✅ Good - Centralized error handling
-const errorHandler = (err, req, res, next) => {
-  let error = { ...err };
-  error.message = err.message;
-
-  // Log error for debugging
-  console.error(err);
-
-  // Mongoose bad ObjectId
-  if (err.name === 'CastError') {
-    const message = 'Resource not found';
-    error = new ErrorResponse(message, 404);
-  }
-
-  // Mongoose duplicate key
-  if (err.code === 11000) {
-    const message = 'Duplicate field value entered';
-    error = new ErrorResponse(message, 400);
-  }
-
-  // Mongoose validation error
-  if (err.name === 'ValidationError') {
-    const message = Object.values(err.errors).map(val => val.message);
-    error = new ErrorResponse(message, 400);
-  }
-
-  res.status(error.statusCode || 500).json({
-    success: false,
-    error: error.message || 'Server Error',
-  });
-};
-```
-
-## 🔧 Contributing Guidelines
-
-### Issue Types
-
-#### 🐛 Bug Reports
-- **Clear description** of the problem
-- **Steps to reproduce** the issue
-- **Expected vs actual behavior**
-- **Environment details** (OS, browser, Node version)
-- **Screenshots or logs** if applicable
-
-#### ✨ Feature Requests
-- **Clear description** of the feature
-- **Use case** and benefits
-- **Mockups or examples** if applicable
-- **Implementation suggestions** if you have ideas
-
-#### 📚 Documentation
-- **Clear description** of what needs documentation
-- **Target audience** (developers, users, etc.)
-- **Examples** of what you'd like to see
-
-### Branch Naming Convention
-```
-type/description
-
-Examples:
-feature/user-authentication
-bugfix/task-completion-issue
-docs/api-documentation-update
-style/button-component-styling
-refactor/redux-store-structure
-test/auth-component-tests
-```
-
-### Commit Message Format
-```
-type(scope): description
-
-Examples:
-feat(auth): add Google OAuth login
-fix(tasks): resolve task completion bug
-docs(readme): update installation instructions
-style(ui): improve button component styling
-refactor(store): simplify Redux slice structure
-test(auth): add authentication test cases
-```
-
-#### Commit Types
-- **feat**: New feature
-- **fix**: Bug fix
-- **docs**: Documentation changes
-- **style**: Code style changes (formatting, etc.)
-- **refactor**: Code refactoring
-- **test**: Adding or updating tests
-- **chore**: Maintenance tasks
 
 ## 🧪 Testing
 
-### Frontend Testing
-```bash
-cd client
+### **Testing Requirements**
+- **Unit tests** for utility functions
+- **Component tests** for React components
+- **Integration tests** for feature workflows
+- **Accessibility tests** for UI components
 
+### **Running Tests**
+```bash
 # Run all tests
-npm test
+npm run test
 
 # Run tests in watch mode
-npm test -- --watch
+npm run test -- --watch
 
 # Run tests with coverage
-npm test -- --coverage
+npm run test -- --coverage
 
 # Run specific test file
-npm test -- --testPathPattern=TaskComponent
+npm run test -- TaskManager.test.js
 ```
 
-### Backend Testing
-```bash
-cd server
-
-# Run all tests
-npm test
-
-# Run tests in watch mode
-npm run test:watch
-
-# Run tests with coverage
-npm run test:coverage
-
-# Run specific test file
-npm test -- --testPathPattern=auth
-```
-
-### Test Writing Guidelines
-
-#### React Component Tests
+### **Test Structure**
 ```jsx
-// ✅ Good - Comprehensive component test
-import React from 'react';
 import { render, screen, fireEvent } from '@testing-library/react';
-import { Provider } from 'react-redux';
-import { store } from '../store';
-import TaskForm from './TaskForm';
+import TaskManager from '../TaskManager';
 
-const renderWithProvider = (component) => {
-  return render(
-    <Provider store={store}>
-      {component}
-    </Provider>
-  );
-};
-
-describe('TaskForm', () => {
-  it('renders form fields correctly', () => {
-    renderWithProvider(<TaskForm />);
-    
+describe('TaskManager', () => {
+  test('renders task form', () => {
+    render(<TaskManager />);
     expect(screen.getByLabelText(/task title/i)).toBeInTheDocument();
-    expect(screen.getByLabelText(/priority/i)).toBeInTheDocument();
-    expect(screen.getByLabelText(/due date/i)).toBeInTheDocument();
   });
-
-  it('submits form with correct data', () => {
-    const mockSubmit = jest.fn();
-    renderWithProvider(<TaskForm onSubmit={mockSubmit} />);
+  
+  test('adds new task', async () => {
+    render(<TaskManager />);
+    const input = screen.getByLabelText(/task title/i);
+    const button = screen.getByText(/add task/i);
     
-    fireEvent.change(screen.getByLabelText(/task title/i), {
-      target: { value: 'Test Task' },
-    });
+    fireEvent.change(input, { target: { value: 'New Task' } });
+    fireEvent.click(button);
     
-    fireEvent.click(screen.getByRole('button', { name: /save/i }));
-    
-    expect(mockSubmit).toHaveBeenCalledWith({
-      title: 'Test Task',
-      priority: 'medium',
-      dueDate: expect.any(String),
-    });
+    expect(screen.getByText('New Task')).toBeInTheDocument();
   });
 });
 ```
 
-#### Backend API Tests
-```javascript
-// ✅ Good - API endpoint test
-const request = require('supertest');
-const app = require('../app');
-const Task = require('../models/Task');
-const { setupTestDB } = require('./testUtils');
+## 📝 Documentation
 
-describe('POST /api/tasks', () => {
-  setupTestDB();
+### **Code Documentation**
+- **JSDoc comments** for functions and components
+- **Inline comments** for complex logic
+- **README updates** for new features
+- **API documentation** for backend endpoints
 
-  it('should create a new task', async () => {
-    const taskData = {
-      title: 'Test Task',
-      description: 'Test Description',
-      priority: 'high',
-      dueDate: '2024-12-31',
-    };
-
-    const response = await request(app)
-      .post('/api/tasks')
-      .set('Authorization', `Bearer ${testToken}`)
-      .send(taskData)
-      .expect(201);
-
-    expect(response.body.success).toBe(true);
-    expect(response.body.data.title).toBe(taskData.title);
-    
-    // Verify task was saved to database
-    const savedTask = await Task.findById(response.body.data._id);
-    expect(savedTask).toBeTruthy();
-    expect(savedTask.title).toBe(taskData.title);
-  });
-
-  it('should return 400 for invalid data', async () => {
-    const invalidData = {
-      title: '', // Empty title should fail validation
-    };
-
-    await request(app)
-      .post('/api/tasks')
-      .set('Authorization', `Bearer ${testToken}`)
-      .send(invalidData)
-      .expect(400);
-  });
-});
+### **Component Documentation**
+```jsx
+/**
+ * TaskManager - Manages user tasks with CRUD operations
+ * 
+ * Features:
+ * - Add new tasks with title, description, and priority
+ * - Mark tasks as complete/incomplete
+ * - Filter tasks by status and priority
+ * - Search tasks by text content
+ * - Delete tasks with confirmation
+ * 
+ * @example
+ * <TaskManager />
+ * 
+ * @returns {JSX.Element} Task management interface
+ */
+const TaskManager = () => {
+  // Component implementation
+};
 ```
 
-## 🔄 Pull Request Process
+## 🔒 Security Guidelines
 
-### 1. Prepare Your Changes
-```bash
-# Ensure you're on the main branch and up to date
-git checkout main
-git pull upstream main
+### **Frontend Security**
+- **Validate all inputs** before processing
+- **Sanitize user data** before display
+- **Use HTTPS** in production
+- **Implement proper authentication** flows
+- **Protect against XSS** attacks
 
-# Create and switch to feature branch
-git checkout -b feature/your-feature-name
+### **Data Handling**
+- **Encrypt sensitive data** in localStorage
+- **Validate data formats** before storage
+- **Implement proper logout** functionality
+- **Clear sensitive data** on logout
 
-# Make your changes and commit them
-git add .
-git commit -m "feat(scope): description of changes"
+## 🚀 Pull Request Process
 
-# Push to your fork
-git push origin feature/your-feature-name
-```
+### **Before Submitting**
+1. **Test thoroughly** - Ensure all tests pass
+2. **Check linting** - Run `npm run lint`
+3. **Format code** - Run `npm run format`
+4. **Update documentation** - Add/update relevant docs
+5. **Test on different browsers** - Ensure compatibility
 
-### 2. Create Pull Request
-1. Go to your fork on GitHub
-2. Click "New Pull Request"
-3. Select your feature branch
-4. Fill out the PR template
-5. Submit the PR
-
-### 3. PR Template
+### **Pull Request Template**
 ```markdown
 ## Description
-Brief description of the changes made.
+Brief description of changes
 
 ## Type of Change
-- [ ] Bug fix (non-breaking change which fixes an issue)
-- [ ] New feature (non-breaking change which adds functionality)
-- [ ] Breaking change (fix or feature that would cause existing functionality to not work as expected)
+- [ ] Bug fix
+- [ ] New feature
+- [ ] Breaking change
 - [ ] Documentation update
 
 ## Testing
-- [ ] I have tested this change locally
-- [ ] I have added/updated tests for this change
-- [ ] All tests pass
+- [ ] Unit tests pass
+- [ ] Integration tests pass
+- [ ] Manual testing completed
+- [ ] Cross-browser testing completed
+
+## Screenshots
+Add screenshots if UI changes
 
 ## Checklist
-- [ ] My code follows the style guidelines of this project
-- [ ] I have performed a self-review of my own code
-- [ ] I have commented my code, particularly in hard-to-understand areas
-- [ ] I have made corresponding changes to the documentation
-- [ ] My changes generate no new warnings
-- [ ] I have added tests that prove my fix is effective or that my feature works
-- [ ] New and existing unit tests pass locally with my changes
-
-## Screenshots (if applicable)
-Add screenshots to help explain your changes.
-
-## Additional Notes
-Any additional information that reviewers should know.
+- [ ] Code follows style guidelines
+- [ ] Self-review completed
+- [ ] Documentation updated
+- [ ] No console errors
+- [ ] Responsive design maintained
 ```
 
-## 👀 Code Review
-
-### Review Process
-1. **Automated checks** must pass (CI/CD)
+### **Review Process**
+1. **Automated checks** must pass
 2. **Code review** by maintainers
 3. **Address feedback** and make changes
 4. **Final approval** and merge
 
-### Review Guidelines
+## 🐛 Bug Reports
 
-#### What Reviewers Look For
-- **Code quality** and readability
-- **Performance** considerations
-- **Security** implications
-- **Testing** coverage
-- **Documentation** updates
-- **Accessibility** compliance
+### **Bug Report Template**
+```markdown
+## Bug Description
+Clear description of the issue
 
-#### Responding to Reviews
-```bash
-# Make requested changes
-git add .
-git commit -m "fix: address review feedback"
+## Steps to Reproduce
+1. Go to '...'
+2. Click on '...'
+3. See error
 
-# Push updates
-git push origin feature/your-feature-name
+## Expected Behavior
+What should happen
 
-# The PR will automatically update
+## Actual Behavior
+What actually happens
+
+## Environment
+- OS: [e.g., Windows 10, macOS 12]
+- Browser: [e.g., Chrome 100, Firefox 99]
+- Version: [e.g., 1.2.3]
+
+## Additional Context
+Screenshots, logs, or other relevant information
 ```
 
-## 📖 Documentation
+## 💡 Feature Requests
 
-### Code Documentation
-- **JSDoc comments** for functions and classes
-- **README updates** for new features
-- **API documentation** for new endpoints
-- **Component stories** for UI components
+### **Feature Request Template**
+```markdown
+## Feature Description
+Clear description of the requested feature
 
-### Example JSDoc
-```javascript
-/**
- * Creates a new task in the system
- * @param {Object} taskData - The task data
- * @param {string} taskData.title - Task title
- * @param {string} taskData.description - Task description
- * @param {string} taskData.priority - Task priority (low, medium, high)
- * @param {Date} taskData.dueDate - Task due date
- * @param {string} userId - ID of the user creating the task
- * @returns {Promise<Object>} The created task object
- * @throws {Error} If task creation fails
- */
-const createTask = async (taskData, userId) => {
-  // Implementation
-};
+## Use Case
+Why this feature is needed
+
+## Proposed Solution
+How you think it should work
+
+## Alternatives Considered
+Other approaches you've considered
+
+## Additional Context
+Screenshots, mockups, or examples
 ```
 
-## 🤝 Community Guidelines
+## 📚 Learning Resources
 
-### Communication
+### **For Contributors**
+- [React Documentation](https://react.dev/)
+- [Material-UI Guide](https://mui.com/material-ui/getting-started/)
+- [Testing Library](https://testing-library.com/docs/)
+- [GitHub Flow](https://guides.github.com/introduction/flow/)
+
+### **Project-Specific**
+- Review existing components for patterns
+- Check `theme.js` for styling guidelines
+- Study authentication flow in `AuthContext`
+- Understand data flow in components
+
+## 🏷️ Labels and Milestones
+
+### **Issue Labels**
+- `bug` - Something isn't working
+- `enhancement` - New feature or request
+- `documentation` - Improvements to docs
+- `good first issue` - Good for newcomers
+- `help wanted` - Extra attention needed
+- `priority: high` - Important issues
+
+### **Milestones**
+- `v1.0.0` - Initial release
+- `v1.1.0` - Feature additions
+- `v1.2.0` - Performance improvements
+- `v2.0.0` - Major refactoring
+
+## 🎉 Recognition
+
+### **Contributor Benefits**
+- **Name in contributors list**
+- **Contributor badge** on profile
+- **Early access** to new features
+- **Direct communication** with maintainers
+- **Recognition** in release notes
+
+### **Contributor Levels**
+- **Bronze**: 1-5 contributions
+- **Silver**: 6-20 contributions
+- **Gold**: 21+ contributions
+- **Platinum**: 50+ contributions
+
+## 📞 Getting Help
+
+### **Communication Channels**
+- **GitHub Issues** - Bug reports and feature requests
+- **GitHub Discussions** - General questions and ideas
+- **Pull Request Comments** - Code review feedback
+- **Email** - Direct contact for urgent matters
+
+### **Community Guidelines**
 - **Be respectful** and inclusive
-- **Use clear language** and avoid jargon
-- **Provide constructive feedback**
-- **Ask questions** when you need help
+- **Help others** when possible
+- **Share knowledge** and resources
+- **Follow project** coding standards
+- **Ask questions** when unsure
 
-### Getting Help
-- **Check existing issues** first
-- **Search documentation** and discussions
-- **Ask in discussions** section
-- **Join community channels** (Discord, etc.)
+## 📋 Contributor Checklist
 
-### Recognition
-- **Contributors** are listed in README
-- **Significant contributions** get special recognition
-- **All contributors** are appreciated
+Before submitting your contribution, ensure you've completed:
 
-## 🎯 Contribution Areas
-
-### High Priority
-- **Bug fixes** and critical issues
-- **Security vulnerabilities**
-- **Performance improvements**
-- **Accessibility enhancements**
-
-### Medium Priority
-- **New features** and enhancements
-- **UI/UX improvements**
-- **Documentation updates**
-- **Test coverage improvements**
-
-### Low Priority
-- **Code style** improvements
-- **Minor UI tweaks**
-- **Documentation** formatting
-- **Example** additions
-
-## 📞 Contact & Support
-
-### Questions?
-- **GitHub Discussions**: For general questions
-- **GitHub Issues**: For bugs and feature requests
-- **Discord**: For real-time chat and support
-- **Email**: For private or sensitive matters
-
-### Maintainers
-- **Project Lead**: [@username](https://github.com/username)
-- **Frontend Lead**: [@username](https://github.com/username)
-- **Backend Lead**: [@username](https://github.com/username)
+- [ ] **Code follows** project style guidelines
+- [ ] **Tests pass** and coverage is adequate
+- [ ] **Documentation** is updated
+- [ ] **Linting** passes without errors
+- [ ] **Code is formatted** properly
+- [ ] **Security considerations** are addressed
+- [ ] **Accessibility** requirements are met
+- [ ] **Responsive design** is maintained
+- [ ] **Cross-browser** compatibility verified
+- [ ] **Performance** impact is considered
 
 ---
 
-**Thank you for contributing to Smart Life Manager! 🎉**
+**Thank you for contributing to Smart Life Manager!** 🎉
 
-Your contributions help make this project better for everyone. Whether you're fixing a bug, adding a feature, or improving documentation, every contribution is valuable. 
+Your contributions help make this project better for everyone. If you have any questions or need help getting started, don't hesitate to ask! 

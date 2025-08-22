@@ -1,448 +1,353 @@
-# Smart Life & Work Manager 🚀
+# 🚀 Smart Life & Work Manager
 
-A comprehensive life management application built with modern web technologies, designed to help users manage tasks, goals, health, finances, and personal development in one integrated platform.
+A comprehensive, full-stack life management application built with React, Node.js, and modern web technologies. This app helps you organize every aspect of your life - from daily tasks to long-term goals, health tracking to financial management.
 
-## 🌟 Features
+## ✨ Features Overview
 
-### Core Functionality
-- **Task Management** - Create, organize, and track tasks with priorities and deadlines
-- **Goal Setting** - Set and monitor progress towards personal and professional goals
-- **Health Tracking** - Monitor workouts, meals, and health metrics
-- **Financial Management** - Track expenses, income, budgets, and financial goals
-- **Work Organization** - Manage projects, meetings, and work notes
-- **Learning Tracker** - Track courses, books, and learning progress
-- **Life Enhancement** - Vision boards, bucket lists, and personal development tools
+### 🔐 **Authentication System**
+- **User Registration & Login**: Secure JWT-based authentication
+- **Profile Management**: Update personal information and preferences
+- **Password Security**: Encrypted password storage and validation
+- **Session Management**: Persistent login across browser sessions
 
-### Technical Features
-- **Multi-language Support** - English and Traditional Chinese (繁體中文)
-- **Responsive Design** - Works seamlessly on desktop, tablet, and mobile
-- **Real-time Updates** - Live data synchronization across devices
-- **Data Visualization** - Interactive charts and progress tracking
-- **Offline Support** - Basic functionality when internet is unavailable
-- **Dark/Light Themes** - Customizable user interface themes
+### 📊 **Smart Dashboard**
+- **Real-time Overview**: Visual summary of all life areas
+- **Progress Tracking**: Charts and metrics for goals, tasks, and health
+- **Quick Actions**: One-click access to common functions
+- **Recent Activity**: Timeline of your latest actions
+- **Smart Alerts**: Notifications for overdue tasks and upcoming deadlines
 
-## 🛠️ Tech Stack
+### ✅ **Task Management**
+- **CRUD Operations**: Create, read, update, and delete tasks
+- **Priority System**: High, medium, and low priority levels
+- **Category Organization**: Work, personal, health, and finance categories
+- **Due Date Tracking**: Set deadlines and get overdue notifications
+- **Status Management**: Mark tasks as pending, in-progress, or completed
+- **Search & Filter**: Find tasks quickly with advanced filtering
 
-### Frontend
-- **React 18** - Modern React with hooks and functional components
-- **Material-UI (MUI)** - Professional UI component library
-- **Redux Toolkit** - State management with RTK Query
-- **React Router** - Client-side routing
-- **Chart.js & Recharts** - Data visualization
-- **i18next** - Internationalization
+### 🎯 **Goals & Progress Tracking**
+- **Goal Setting**: Annual, quarterly, and monthly objectives
+- **Milestone Tracking**: Break down goals into manageable steps
+- **Progress Visualization**: Visual progress bars and completion percentages
+- **Status Management**: Active, completed, on-hold, or cancelled
+- **Category Organization**: Personal, work, health, education, and finance goals
+- **Deadline Management**: Set target dates and track progress
 
-### Backend
-- **Node.js** - JavaScript runtime
-- **Express.js** - Web application framework
-- **MongoDB** - NoSQL database
-- **Mongoose** - MongoDB object modeling
-- **JWT** - Authentication and authorization
-- **Passport.js** - OAuth integration (Google, Facebook)
+### 💪 **Health & Fitness Tracker**
+- **Workout Logging**: Record exercise type, duration, and calories burned
+- **Nutrition Tracking**: Log meals, calories, and water intake
+- **Weight Management**: Track weight changes over time
+- **Progress Analytics**: Visual charts for health metrics
+- **Streak Tracking**: Maintain motivation with achievement streaks
+- **Category Organization**: Different types of health activities
 
-### Development Tools
-- **ESLint & Prettier** - Code quality and formatting
-- **Hot Reload** - Fast development experience
-- **Environment Configuration** - Flexible deployment settings
-- **Docker Support** - Containerized deployment
+### 💰 **Finance Tracker**
+- **Income & Expenses**: Log all financial transactions
+- **Category Management**: Organize spending by category
+- **Budget Tracking**: Monitor spending patterns and ratios
+- **Payment Methods**: Track cash, card, bank transfers, and savings
+- **Financial Analytics**: Charts for income, expenses, and balance trends
+- **Monthly Reports**: Comprehensive financial summaries
 
-## 📁 Project Structure
+### 📝 **Smart Notes System**
+- **Rich Text Notes**: Create detailed notes with descriptions
+- **Category Organization**: Organize notes by purpose
+- **Search & Filter**: Find notes quickly with search functionality
+- **Completion Tracking**: Mark notes as completed or in-progress
+- **Local Storage**: All data saved securely in your browser
 
-```
-smart-life-manager/
-├── client/                          # React frontend
-│   ├── public/                      # Static assets
-│   ├── src/
-│   │   ├── components/              # Reusable UI components
-│   │   │   ├── layout/             # Layout components
-│   │   │   ├── forms/              # Form components
-│   │   │   ├── charts/             # Chart components
-│   │   │   └── ui/                 # Basic UI elements
-│   │   ├── pages/                  # Main application pages
-│   │   ├── hooks/                  # Custom React hooks
-│   │   ├── contexts/               # React contexts
-│   │   ├── store/                  # Redux store and slices
-│   │   ├── services/               # API services
-│   │   ├── utils/                  # Utility functions
-│   │   ├── styles/                 # Global styles
-│   │   └── i18n/                  # Internationalization
-│   ├── package.json
-│   └── README.md
-├── server/                          # Express.js backend
-│   ├── src/
-│   │   ├── config/                 # Configuration files
-│   │   ├── controllers/            # Route controllers
-│   │   ├── models/                 # Mongoose models
-│   │   ├── routes/                 # API routes
-│   │   ├── middlewares/            # Custom middleware
-│   │   ├── utils/                  # Utility functions
-│   │   └── app.js                  # Main server file
-│   ├── package.json
-│   └── README.md
-├── docs/                           # Documentation
-│   ├── api/                        # API documentation
-│   ├── database/                   # Database schemas
-│   ├── deployment/                 # Deployment guides
-│   └── tutorials/                  # Learning tutorials
-├── docker-compose.yml              # Docker configuration
-├── .env.example                    # Environment variables template
-└── README.md                       # This file
-```
+### 📱 **Responsive Design**
+- **Mobile-First**: Optimized for all device sizes
+- **Touch-Friendly**: Easy navigation on mobile devices
+- **Progressive Web App**: Install as a native app on your device
+- **Cross-Platform**: Works on Windows, Mac, iOS, and Android
+
+## 🛠️ Technology Stack
+
+### **Frontend**
+- **React 18**: Modern React with hooks and functional components
+- **Material-UI (MUI)**: Professional UI components and theming
+- **React Router**: Client-side routing with hash routing for GitHub Pages
+- **Recharts**: Beautiful and responsive charts for data visualization
+- **Context API**: State management for authentication and user data
+
+### **Backend (Mock Implementation)**
+- **Local Storage**: Client-side data persistence
+- **Mock Authentication**: Simulated login/registration for development
+- **Data Validation**: Input validation and error handling
+- **Security**: JWT token simulation and secure data handling
+
+### **Design System**
+- **Custom Theme**: Sophisticated color palette with teal primary colors
+- **Typography**: Professional font stack with proper hierarchy
+- **Animations**: Smooth transitions and hover effects
+- **Accessibility**: Focus management and keyboard navigation
 
 ## 🚀 Quick Start
 
-### Prerequisites
-- **Node.js** 18+ and **npm** 9+
-- **MongoDB** 6+ (local or cloud)
-- **Git** for version control
+### **Prerequisites**
+- Node.js 18+ and npm 8+
+- Modern web browser (Chrome, Firefox, Safari, Edge)
 
-### 1. Clone the Repository
+### **Installation**
+
+1. **Clone the repository**
+   ```bash
+   git clone https://github.com/yourusername/smart-life-manager.git
+   cd smart-life-manager
+   ```
+
+2. **Install dependencies**
+   ```bash
+   npm run install:all
+   ```
+
+3. **Start development server**
+   ```bash
+   npm run dev
+   ```
+
+4. **Open your browser**
+   Navigate to `http://localhost:3000`
+
+### **Demo Account**
+- **Email**: `demo@example.com`
+- **Password**: `Demo123!`
+
+## 📖 Usage Guide
+
+### **Getting Started**
+1. **Create Account**: Register with your email and password
+2. **Set Goals**: Define your life objectives and milestones
+3. **Add Tasks**: Create daily tasks and organize by priority
+4. **Track Health**: Log workouts, meals, and wellness activities
+5. **Monitor Finances**: Record income, expenses, and track spending
+6. **Use Dashboard**: Get overview of all areas in one place
+
+### **Best Practices**
+- **Daily Check-ins**: Review and update your dashboard daily
+- **Goal Setting**: Break large goals into smaller milestones
+- **Category Organization**: Use consistent categories for better tracking
+- **Regular Reviews**: Weekly and monthly progress assessments
+- **Data Backup**: Export important data regularly
+
+### **Keyboard Shortcuts**
+- **Enter**: Submit forms and add items
+- **Escape**: Close dialogs and cancel actions
+- **Tab**: Navigate between form fields
+- **Arrow Keys**: Navigate through lists and options
+
+## 🔧 Development
+
+### **Project Structure**
+```
+smart-life-manager/
+├── client/                 # React frontend
+│   ├── src/
+│   │   ├── components/    # Reusable UI components
+│   │   │   ├── auth/      # Authentication components
+│   │   │   ├── dashboard/ # Dashboard and charts
+│   │   │   ├── goals/     # Goals management
+│   │   │   ├── health/    # Health tracking
+│   │   │   └── finance/   # Finance management
+│   │   ├── contexts/      # React contexts
+│   │   ├── theme.js       # Custom Material-UI theme
+│   │   └── App.js         # Main application component
+│   └── public/            # Static assets
+├── server/                 # Node.js backend (future)
+├── docs/                   # Documentation
+└── README.md              # This file
+```
+
+### **Available Scripts**
 ```bash
-git clone https://github.com/yourusername/smart-life-manager.git
-cd smart-life-manager
+# Development
+npm run dev              # Start both frontend and backend
+npm run dev:client       # Start frontend only
+npm run dev:server       # Start backend only
+
+# Building
+npm run build            # Build both frontend and backend
+npm run build:client     # Build frontend only
+npm run build:server     # Build backend only
+
+# Testing
+npm run test             # Run all tests
+npm run test:client      # Run frontend tests
+npm run test:server      # Run backend tests
+
+# Code Quality
+npm run lint             # Lint all code
+npm run format           # Format all code
+npm run security:audit   # Security audit
 ```
 
-### 2. Install Dependencies
+### **Adding New Features**
+1. **Create Component**: Add new component in appropriate directory
+2. **Update Routes**: Add route in `App.js`
+3. **Add Navigation**: Include in navigation menu
+4. **Update Dashboard**: Integrate with main dashboard if relevant
+5. **Add Tests**: Create test files for new functionality
 
-#### Frontend
-```bash
-cd client
-npm install
-```
+## 🌐 Deployment
 
-#### Backend
-```bash
-cd server
-npm install
-```
+### **GitHub Pages (Current)**
+The app is configured for GitHub Pages deployment:
+- Uses hash routing for SPA compatibility
+- Automatic deployment on main branch pushes
+- Optimized build process for production
 
-### 3. Environment Setup
+### **Other Platforms**
+- **Vercel**: Zero-config deployment
+- **Netlify**: Drag-and-drop deployment
+- **Railway**: Full-stack deployment
+- **Docker**: Containerized deployment
 
-#### Frontend (.env)
-```bash
-cd client
-cp .env.example .env
-```
+## 🔒 Security Features
 
-Edit `.env`:
-```env
-REACT_APP_API_URL=http://localhost:5000/api
-REACT_APP_ENVIRONMENT=development
-```
+### **Authentication Security**
+- JWT token-based authentication
+- Secure password hashing
+- Session management
+- Protected routes
 
-#### Backend (.env)
-```bash
-cd server
-cp .env.example .env
-```
+### **Data Security**
+- Client-side data storage
+- Input validation and sanitization
+- XSS protection
+- CSRF protection
 
-Edit `.env`:
-```env
-NODE_ENV=development
-PORT=5000
-MONGODB_URI=mongodb://localhost:27017/smart-life-manager
-JWT_SECRET=your-super-secret-jwt-key
-JWT_EXPIRE=30d
-CLIENT_URL=http://localhost:3000
-```
+### **Privacy**
+- All data stored locally
+- No external data sharing
+- User-controlled data export
+- Secure logout functionality
 
-### 4. Start MongoDB
-```bash
-# Local MongoDB
-mongod
+## 📊 Data Management
 
-# Or using Docker
-docker run -d -p 27017:27017 --name mongodb mongo:latest
-```
+### **Local Storage**
+- All data stored in browser localStorage
+- Automatic data persistence
+- No external database required
+- Data export/import functionality
 
-### 5. Run the Application
+### **Data Structure**
+- **Users**: Authentication and profile information
+- **Tasks**: Task management with metadata
+- **Goals**: Goal tracking with milestones
+- **Health**: Fitness and wellness data
+- **Finance**: Income, expenses, and budgets
+- **Notes**: General note-taking system
 
-#### Development Mode
-```bash
-# Terminal 1 - Backend
-cd server
-npm run dev
+### **Data Export**
+- CSV format for spreadsheet analysis
+- JSON format for data backup
+- Selective data export by category
+- Complete data backup functionality
 
-# Terminal 2 - Frontend
-cd client
-npm start
-```
+## 🎨 Customization
 
-#### Production Mode
-```bash
-# Build frontend
-cd client
-npm run build
+### **Theme Customization**
+- Modify `client/src/theme.js` for color changes
+- Update CSS variables for styling
+- Custom component styling with Material-UI
+- Responsive design adjustments
 
-# Start backend
-cd server
-npm start
-```
-
-### 6. Access the Application
-- **Frontend**: http://localhost:3000
-- **Backend API**: http://localhost:5000
-- **API Documentation**: http://localhost:5000/api/docs
-
-## 🐳 Docker Deployment
-
-### Using Docker Compose
-```bash
-# Start all services
-docker-compose up -d
-
-# View logs
-docker-compose logs -f
-
-# Stop services
-docker-compose down
-```
-
-### Manual Docker Build
-```bash
-# Build frontend
-docker build -t smart-life-manager-client ./client
-
-# Build backend
-docker build -t smart-life-manager-server ./server
-
-# Run containers
-docker run -d -p 3000:3000 smart-life-manager-client
-docker run -d -p 5000:5000 smart-life-manager-server
-```
-
-## 📚 Learning Resources
-
-### For Beginners
-
-#### React & Frontend
-- [React Official Tutorial](https://react.dev/learn) - Start here for React basics
-- [Material-UI Documentation](https://mui.com/material-ui/getting-started/) - UI component library
-- [Redux Toolkit Guide](https://redux-toolkit.js.org/introduction/getting-started) - State management
-- [React Router Tutorial](https://reactrouter.com/en/main/start/tutorial) - Client-side routing
-
-#### Node.js & Backend
-- [Node.js Getting Started](https://nodejs.org/en/learn/getting-started/introduction-to-nodejs) - Node.js basics
-- [Express.js Guide](https://expressjs.com/en/guide/routing.html) - Web framework
-- [MongoDB University](https://university.mongodb.com/) - Free MongoDB courses
-- [JWT.io](https://jwt.io/introduction) - Authentication tokens
-
-#### General Web Development
-- [MDN Web Docs](https://developer.mozilla.org/) - Comprehensive web development reference
-- [JavaScript.info](https://javascript.info/) - Modern JavaScript tutorial
-- [CSS-Tricks](https://css-tricks.com/) - CSS and design resources
-
-### For Intermediate Developers
-
-#### Advanced React
-- [React Patterns](https://reactpatterns.com/) - Common React patterns
-- [Kent C. Dodds Blog](https://kentcdodds.com/blog) - React best practices
-- [React Performance](https://react.dev/learn/render-and-commit) - Performance optimization
-
-#### Backend Architecture
-- [Node.js Design Patterns](https://github.com/nodejs/node/wiki/Design-Patterns) - Backend patterns
-- [MongoDB Best Practices](https://docs.mongodb.com/manual/core/data-modeling-introduction/) - Database design
-- [REST API Design](https://restfulapi.net/) - API design principles
-
-#### DevOps & Deployment
-- [Docker Tutorial](https://docs.docker.com/get-started/) - Container basics
-- [GitHub Actions](https://docs.github.com/en/actions) - CI/CD automation
-- [Heroku Deployment](https://devcenter.heroku.com/) - Cloud deployment
-
-### For Advanced Developers
-
-#### Performance & Optimization
-- [React Profiler](https://react.dev/reference/react/Profiler) - Performance analysis
-- [MongoDB Performance](https://docs.mongodb.com/manual/core/performance/) - Database optimization
-- [Web Vitals](https://web.dev/vitals/) - Core web metrics
-
-#### Security
-- [OWASP Top 10](https://owasp.org/www-project-top-ten/) - Security best practices
-- [JWT Security](https://auth0.com/blog/a-look-at-the-latest-draft-for-jwt-bcp/) - Token security
-- [MongoDB Security](https://docs.mongodb.com/manual/security/) - Database security
-
-## 🔧 Development Workflow
-
-### Adding New Features
-
-#### 1. Create Feature Branch
-```bash
-git checkout -b feature/new-feature-name
-```
-
-#### 2. Frontend Development
-```bash
-cd client
-# Create new components in src/components/
-# Create new pages in src/pages/
-# Add Redux slices in src/store/slices/
-# Update routing in src/App.js
-```
-
-#### 3. Backend Development
-```bash
-cd server
-# Create new models in src/models/
-# Create new controllers in src/controllers/
-# Add new routes in src/routes/
-# Update main app.js
-```
-
-#### 4. Testing
-```bash
-# Frontend tests
-cd client
-npm test
-
-# Backend tests
-cd server
-npm test
-```
-
-#### 5. Commit and Push
-```bash
-git add .
-git commit -m "feat: add new feature description"
-git push origin feature/new-feature-name
-```
-
-### Code Quality Standards
-
-#### ESLint Configuration
-```json
-{
-  "extends": [
-    "react-app",
-    "react-app/jest",
-    "prettier"
-  ],
-  "rules": {
-    "no-console": "warn",
-    "prefer-const": "error",
-    "no-unused-vars": "error"
-  }
-}
-```
-
-#### Prettier Configuration
-```json
-{
-  "semi": true,
-  "trailingComma": "es5",
-  "singleQuote": true,
-  "printWidth": 80,
-  "tabWidth": 2
-}
-```
-
-## 🧪 Testing
-
-### Frontend Testing
-```bash
-cd client
-npm test                    # Run all tests
-npm test -- --watch        # Watch mode
-npm test -- --coverage     # Coverage report
-```
-
-### Backend Testing
-```bash
-cd server
-npm test                    # Run all tests
-npm run test:watch         # Watch mode
-npm run test:coverage      # Coverage report
-```
-
-### API Testing
-```bash
-# Using Postman or similar tool
-# Import the Postman collection from docs/api/
-```
-
-## 📊 Database Schema
-
-### Core Collections
-- **Users** - User accounts and profiles
-- **Tasks** - Task management and tracking
-- **Goals** - Goal setting and progress
-- **Workouts** - Health and fitness tracking
-- **Expenses** - Financial expense tracking
-- **Projects** - Work project management
-
-### Relationships
-- Users have many Tasks, Goals, Workouts, etc.
-- Tasks can have Subtasks and Attachments
-- Goals have Milestones and Progress tracking
-- All entities support Tags and Categories
-
-## 🌐 Internationalization
-
-### Supported Languages
-- **English (en)** - Default language
-- **Traditional Chinese (zh-Hant)** - 繁體中文
-
-### Adding New Languages
-1. Create translation file in `client/src/i18n/locales/`
-2. Update language configuration in `client/src/i18n/index.js`
-3. Add language selector in UI components
-
-## 🚀 Deployment
-
-### Environment Variables
-```env
-# Production
-NODE_ENV=production
-PORT=5000
-MONGODB_URI=mongodb+srv://username:password@cluster.mongodb.net/database
-JWT_SECRET=production-jwt-secret
-CLIENT_URL=https://yourdomain.com
-```
-
-### Build Commands
-```bash
-# Frontend build
-cd client
-npm run build
-
-# Backend build
-cd server
-npm run build
-```
-
-### Deployment Platforms
-- **Heroku** - Easy cloud deployment
-- **Vercel** - Frontend deployment
-- **DigitalOcean** - VPS deployment
-- **AWS** - Enterprise deployment
+### **Feature Configuration**
+- Enable/disable specific modules
+- Customize dashboard widgets
+- Adjust notification settings
+- Personalize default categories
 
 ## 🤝 Contributing
 
-### How to Contribute
+### **How to Contribute**
 1. Fork the repository
 2. Create a feature branch
 3. Make your changes
 4. Add tests for new functionality
-5. Ensure all tests pass
-6. Submit a pull request
+5. Submit a pull request
 
-### Contribution Guidelines
-- Follow the existing code style
-- Add comments for complex logic
-- Update documentation as needed
-- Test your changes thoroughly
-- Use conventional commit messages
+### **Development Guidelines**
+- Follow React best practices
+- Use TypeScript for new components
+- Maintain consistent code style
+- Add comprehensive documentation
+- Include unit tests for new features
 
-### Commit Message Format
-```
-type(scope): description
+### **Code Standards**
+- ESLint configuration
+- Prettier formatting
+- Conventional commit messages
+- Comprehensive error handling
+- Accessibility compliance
 
-Examples:
-feat(auth): add Google OAuth login
-fix(tasks): resolve task completion bug
-docs(readme): update installation instructions
-style(ui): improve button component styling
-refactor(store): simplify Redux slice structure
-test(auth): add authentication test cases
-```
+## 📚 Learning Resources
+
+### **React Development**
+- [React Official Documentation](https://react.dev/)
+- [Material-UI Documentation](https://mui.com/)
+- [React Router Tutorial](https://reactrouter.com/)
+
+### **Life Management**
+- [Getting Things Done (GTD)](https://gettingthingsdone.com/)
+- [SMART Goals Framework](https://www.mindtools.com/pages/article/smart-goals.htm)
+- [Habit Formation](https://jamesclear.com/atomic-habits)
+
+### **Web Development**
+- [MDN Web Docs](https://developer.mozilla.org/)
+- [CSS Grid Layout](https://css-tricks.com/snippets/css/complete-guide-grid/)
+- [JavaScript ES6+ Features](https://es6-features.org/)
+
+## 🐛 Troubleshooting
+
+### **Common Issues**
+
+**App won't start**
+- Check Node.js version (18+ required)
+- Clear npm cache: `npm cache clean --force`
+- Delete node_modules and reinstall
+
+**Data not saving**
+- Check browser localStorage support
+- Clear browser cache and cookies
+- Ensure JavaScript is enabled
+
+**Charts not displaying**
+- Check Recharts installation
+- Verify data format
+- Check browser console for errors
+
+**Authentication issues**
+- Clear browser storage
+- Check JWT token validity
+- Verify user credentials
+
+### **Performance Issues**
+- Use browser dev tools for profiling
+- Check for memory leaks
+- Optimize large data sets
+- Implement virtual scrolling for long lists
+
+## 📈 Roadmap
+
+### **Phase 1 (Current)**
+- ✅ Core functionality implementation
+- ✅ Authentication system
+- ✅ Basic data management
+- ✅ Responsive design
+
+### **Phase 2 (Next)**
+- 🔄 Backend API development
+- 🔄 Database integration
+- 🔄 User collaboration features
+- 🔄 Advanced analytics
+
+### **Phase 3 (Future)**
+- 📋 Mobile app development
+- 📋 AI-powered insights
+- 📋 Integration with external services
+- 📋 Advanced reporting and analytics
 
 ## 📄 License
 
@@ -450,26 +355,28 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ## 🙏 Acknowledgments
 
-- **React Team** - For the amazing frontend framework
-- **Material-UI Team** - For the beautiful component library
-- **MongoDB Team** - For the flexible database
-- **Express.js Team** - For the robust backend framework
-- **Open Source Community** - For all the amazing tools and libraries
+- **Perplexity Labs**: Original app inspiration
+- **Material-UI Team**: Beautiful UI components
+- **Recharts Team**: Excellent charting library
+- **React Team**: Amazing frontend framework
 
 ## 📞 Support
 
-### Getting Help
-- **Issues**: [GitHub Issues](https://github.com/yourusername/smart-life-manager/issues)
-- **Discussions**: [GitHub Discussions](https://github.com/yourusername/smart-life-manager/discussions)
-- **Documentation**: [Project Wiki](https://github.com/yourusername/smart-life-manager/wiki)
+### **Getting Help**
+- **GitHub Issues**: Report bugs and request features
+- **Documentation**: Check this README and code comments
+- **Community**: Join our Discord or forum
+- **Email**: Contact the development team
 
-### Community
-- **Discord**: Join our community server
-- **Twitter**: Follow for updates and tips
-- **Blog**: Read our development blog
+### **Feature Requests**
+We welcome feature requests! Please:
+- Check existing issues first
+- Provide detailed use case descriptions
+- Include mockups or examples if possible
+- Explain the benefit to users
 
 ---
 
-**Made with ❤️ by the Smart Life Manager Team**
+**Made with ❤️ for better life management**
 
-*Empowering people to live their best lives through intelligent organization and tracking.*
+*Start organizing your life today with Smart Life Manager!*

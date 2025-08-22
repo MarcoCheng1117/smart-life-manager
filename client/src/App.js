@@ -1,296 +1,254 @@
-import React from 'react';
-import { HashRouter as Router, Routes, Route } from 'react-router-dom';
+import React, { useState } from 'react';
+import { HashRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { ThemeProvider } from '@mui/material/styles';
-import { CssBaseline, AppBar, Toolbar, Typography, Container, Box } from '@mui/material';
+import { CssBaseline, AppBar, Toolbar, Typography, Container, Box, Button, Avatar, Menu, MenuItem, IconButton, Paper, Grid } from '@mui/material';
 import { 
   Dashboard as DashboardIcon, 
   TaskAlt, 
   Flag, 
   Favorite, 
   AccountBalance,
-  Note
+  Note,
+  Person,
+  Logout,
+  Menu as MenuIcon
 } from '@mui/icons-material';
 import './App.css';
 
 // Import our custom theme and components
 import { theme, backgroundColors } from './theme';
+import { AuthProvider, useAuth } from './contexts/AuthContext';
+
+// Import all components
+import LoginForm from './components/auth/LoginForm';
+import RegisterForm from './components/auth/RegisterForm';
+import Dashboard from './components/dashboard/Dashboard';
 import Notes from './components/Notes';
 import TaskManager from './components/TaskManager';
+import GoalsManager from './components/goals/GoalsManager';
+import HealthTracker from './components/health/HealthTracker';
+import FinanceTracker from './components/finance/FinanceTracker';
 
-// Simple components for now
-const Dashboard = () => (
-  <Box sx={{ p: 3, maxWidth: 800, mx: 'auto' }}>
-    <Typography variant="h2" gutterBottom sx={{ display: 'flex', alignItems: 'center', mb: 3 }}>
-      <DashboardIcon sx={{ mr: 2, color: 'primary.main' }} />
-      Dashboard
-    </Typography>
-    
-    <Box sx={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))', gap: 3 }}>
-      <Box sx={{ 
-        p: 3, 
-        border: '1px solid rgba(94, 82, 64, 0.12)', 
-        borderRadius: 2, 
-        textAlign: 'center',
-        backgroundColor: backgroundColors.bg1,
-        transition: 'transform 250ms cubic-bezier(0.16, 1, 0.3, 1)',
-        '&:hover': {
-          transform: 'translateY(-2px)',
-        }
-      }}>
-        <TaskAlt sx={{ fontSize: 40, color: 'primary.main', mb: 1 }} />
-        <Typography variant="h5">Tasks</Typography>
-        <Typography variant="body2" color="text.secondary">
-          Manage your daily tasks and priorities
-        </Typography>
+// Protected Route Component
+const ProtectedRoute = ({ children }) => {
+  const { isAuthenticated, isLoading } = useAuth();
+  
+  if (isLoading) {
+    return (
+      <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
+        <Typography>Loading...</Typography>
       </Box>
-      
-      <Box sx={{ 
-        p: 3, 
-        border: '1px solid rgba(94, 82, 64, 0.12)', 
-        borderRadius: 2, 
-        textAlign: 'center',
-        backgroundColor: backgroundColors.bg2,
-        transition: 'transform 250ms cubic-bezier(0.16, 1, 0.3, 1)',
-        '&:hover': {
-          transform: 'translateY(-2px)',
-        }
-      }}>
-        <Flag sx={{ fontSize: 40, color: 'warning.main', mb: 1 }} />
-        <Typography variant="h5">Goals</Typography>
-        <Typography variant="body2" color="text.secondary">
-          Track your long-term goals and progress
-        </Typography>
-      </Box>
-      
-      <Box sx={{ 
-        p: 3, 
-        border: '1px solid rgba(94, 82, 64, 0.12)', 
-        borderRadius: 2, 
-        textAlign: 'center',
-        backgroundColor: backgroundColors.bg3,
-        transition: 'transform 250ms cubic-bezier(0.16, 1, 0.3, 1)',
-        '&:hover': {
-          transform: 'translateY(-2px)',
-        }
-      }}>
-        <Favorite sx={{ fontSize: 40, color: 'success.main', mb: 1 }} />
-        <Typography variant="h5">Health</Typography>
-        <Typography variant="body2" color="text.secondary">
-          Monitor your health and wellness
-        </Typography>
-      </Box>
-      
-      <Box sx={{ 
-        p: 3, 
-        border: '1px solid rgba(94, 82, 64, 0.12)', 
-        borderRadius: 2, 
-        textAlign: 'center',
-        backgroundColor: backgroundColors.bg8,
-        transition: 'transform 250ms cubic-bezier(0.16, 1, 0.3, 1)',
-        '&:hover': {
-          transform: 'translateY(-2px)',
-        }
-      }}>
-        <AccountBalance sx={{ fontSize: 40, color: 'info.main', mb: 1 }} />
-        <Typography variant="h5">Finance</Typography>
-        <Typography variant="body2" color="text.secondary">
-          Track your finances and budget
-        </Typography>
-      </Box>
+    );
+  }
+  
+  return isAuthenticated ? children : <Navigate to="/login" />;
+};
+
+// Authentication Pages Component
+const AuthPages = () => {
+  const [isLogin, setIsLogin] = useState(true);
+  
+  return (
+    <Box sx={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', bgcolor: 'background.default' }}>
+      {isLogin ? (
+        <LoginForm onSwitchToRegister={() => setIsLogin(false)} />
+      ) : (
+        <RegisterForm onSwitchToLogin={() => setIsLogin(true)} />
+      )}
     </Box>
-    
-    <Box sx={{ 
-      mt: 4, 
-      p: 3, 
-      bgcolor: 'rgba(94, 82, 64, 0.08)', 
-      borderRadius: 2,
-      border: '1px solid rgba(94, 82, 64, 0.12)'
-    }}>
-      <Typography variant="h5" gutterBottom>Welcome to Smart Life Manager!</Typography>
-      <Typography variant="body1" paragraph>
-        This is your personal dashboard for managing tasks, goals, health, and finances. 
-        Start by adding some tasks or notes to get organized!
-      </Typography>
-      <Typography variant="body2" color="text.secondary">
-        All your data is stored locally in your browser, so it's private and secure.
-      </Typography>
+  );
+};
+
+// Main App Layout Component
+const AppLayout = () => {
+  const { currentUser, logout } = useAuth();
+  const [anchorEl, setAnchorEl] = useState(null);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+
+  const handleProfileMenuOpen = (event) => {
+    setAnchorEl(event.currentTarget);
+  };
+
+  const handleProfileMenuClose = () => {
+    setAnchorEl(null);
+  };
+
+  const handleLogout = async () => {
+    await logout();
+    handleProfileMenuClose();
+  };
+
+  const handleMobileMenuToggle = () => {
+    setMobileMenuOpen(!mobileMenuOpen);
+  };
+
+  const navigationItems = [
+    { path: '/', label: 'Dashboard', icon: <DashboardIcon />, color: 'primary' },
+    { path: '/tasks', label: 'Tasks', icon: <TaskAlt />, color: 'warning' },
+    { path: '/notes', label: 'Notes', icon: <Note />, color: 'success' },
+    { path: '/goals', label: 'Goals', icon: <Flag />, color: 'secondary' },
+    { path: '/health', label: 'Health', icon: <Favorite />, color: 'error' },
+    { path: '/finance', label: 'Finance', icon: <AccountBalance />, color: 'info' }
+  ];
+
+  return (
+    <Box sx={{ flexGrow: 1 }}>
+      {/* App Bar */}
+      <AppBar position="static" elevation={0}>
+        <Toolbar>
+          <IconButton
+            edge="start"
+            color="inherit"
+            aria-label="menu"
+            onClick={handleMobileMenuToggle}
+            sx={{ mr: 2, display: { md: 'none' } }}
+          >
+            <MenuIcon />
+          </IconButton>
+          
+          <Typography variant="h5" component="div" sx={{ flexGrow: 1, fontWeight: 600 }}>
+            Smart Life Manager
+          </Typography>
+          
+          {/* User Profile Menu */}
+          <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+            <Typography variant="body2" sx={{ display: { xs: 'none', sm: 'block' } }}>
+              Welcome, {currentUser?.firstName || 'User'}!
+            </Typography>
+            <IconButton
+              onClick={handleProfileMenuOpen}
+              sx={{ p: 0 }}
+            >
+              <Avatar sx={{ bgcolor: 'primary.main' }}>
+                {currentUser?.firstName?.charAt(0) || 'U'}
+              </Avatar>
+            </IconButton>
+            <Menu
+              anchorEl={anchorEl}
+              open={Boolean(anchorEl)}
+              onClose={handleProfileMenuClose}
+              anchorOrigin={{
+                vertical: 'bottom',
+                horizontal: 'right',
+              }}
+              transformOrigin={{
+                vertical: 'top',
+                horizontal: 'right',
+              }}
+            >
+              <MenuItem onClick={handleProfileMenuClose}>
+                <Person sx={{ mr: 1 }} />
+                Profile
+              </MenuItem>
+              <MenuItem onClick={handleLogout}>
+                <Logout sx={{ mr: 1 }} />
+                Logout
+              </MenuItem>
+            </Menu>
+          </Box>
+        </Toolbar>
+      </AppBar>
+      
+      {/* Navigation Menu */}
+      <Container maxWidth="xl" sx={{ mt: 3 }}>
+        {/* Desktop Navigation */}
+        <Box sx={{ 
+          display: { xs: 'none', md: 'flex' }, 
+          gap: 2, 
+          mb: 3, 
+          flexWrap: 'wrap',
+          justifyContent: 'center'
+        }}>
+          {navigationItems.map((item) => (
+            <a key={item.path} href={`#${item.path}`} style={{ textDecoration: 'none' }}>
+              <Button
+                variant="outlined"
+                startIcon={item.icon}
+                sx={{
+                  borderColor: `${item.color}.main`,
+                  color: `${item.color}.main`,
+                  '&:hover': {
+                    borderColor: `${item.color}.dark`,
+                    backgroundColor: `${item.color}.main`,
+                    color: 'white'
+                  },
+                  transition: 'all 250ms cubic-bezier(0.16, 1, 0.3, 1)'
+                }}
+              >
+                {item.label}
+              </Button>
+            </a>
+          ))}
+        </Box>
+
+        {/* Mobile Navigation */}
+        {mobileMenuOpen && (
+          <Paper sx={{ 
+            p: 2, 
+            mb: 3, 
+            backgroundColor: backgroundColors.bg1,
+            display: { md: 'none' }
+          }}>
+            <Grid container spacing={1}>
+              {navigationItems.map((item) => (
+                <Grid item xs={6} key={item.path}>
+                  <a href={`#${item.path}`} style={{ textDecoration: 'none' }}>
+                    <Button
+                      fullWidth
+                      variant="outlined"
+                      startIcon={item.icon}
+                      onClick={() => setMobileMenuOpen(false)}
+                      sx={{
+                        borderColor: `${item.color}.main`,
+                        color: `${item.color}.main`,
+                        '&:hover': {
+                          borderColor: `${item.color}.dark`,
+                          backgroundColor: `${item.color}.main`,
+                          color: 'white'
+                        }
+                      }}
+                    >
+                      {item.label}
+                    </Button>
+                  </a>
+                </Grid>
+              ))}
+            </Grid>
+          </Paper>
+        )}
+        
+        {/* Main Content Routes */}
+        <Routes>
+          <Route path="/" element={<Dashboard />} />
+          <Route path="/tasks" element={<TaskManager />} />
+          <Route path="/notes" element={<Notes />} />
+          <Route path="/goals" element={<GoalsManager />} />
+          <Route path="/health" element={<HealthTracker />} />
+          <Route path="/finance" element={<FinanceTracker />} />
+        </Routes>
+      </Container>
     </Box>
-  </Box>
-);
+  );
+};
 
-const Goals = () => (
-  <Box sx={{ p: 3, maxWidth: 800, mx: 'auto' }}>
-    <Typography variant="h2" gutterBottom sx={{ display: 'flex', alignItems: 'center', mb: 3 }}>
-      <Flag sx={{ mr: 2, color: 'warning.main' }} />
-      Goals
-    </Typography>
-    <Typography variant="h5" color="text.secondary" sx={{ textAlign: 'center', mt: 4 }}>
-      Goal tracking feature coming soon! 
-      <br />
-      For now, use the Notes section to track your goals.
-    </Typography>
-  </Box>
-);
-
-const Health = () => (
-  <Box sx={{ p: 3, maxWidth: 800, mx: 'auto' }}>
-    <Typography variant="h2" gutterBottom sx={{ display: 'flex', alignItems: 'center', mb: 3 }}>
-      <Favorite sx={{ mr: 2, color: 'success.main' }} />
-      Health
-    </Typography>
-    <Typography variant="h5" color="text.secondary" sx={{ textAlign: 'center', mt: 4 }}>
-      Health tracking feature coming soon! 
-      <br />
-      For now, use the Notes section to track your health metrics.
-    </Typography>
-  </Box>
-);
-
-const Finance = () => (
-  <Box sx={{ p: 3, maxWidth: 800, mx: 'auto' }}>
-    <Typography variant="h2" gutterBottom sx={{ display: 'flex', alignItems: 'center', mb: 3 }}>
-      <AccountBalance sx={{ mr: 2, color: 'info.main' }} />
-      Finance
-    </Typography>
-    <Typography variant="h5" color="text.secondary" sx={{ textAlign: 'center', mt: 4 }}>
-      Finance tracking feature coming soon! 
-      <br />
-      For now, use the Notes section to track your expenses and income.
-    </Typography>
-  </Box>
-);
-
+// Main App Component
 function App() {
   return (
     <ThemeProvider theme={theme}>
       <CssBaseline />
-      <Router>
-        <Box sx={{ flexGrow: 1 }}>
-          <AppBar position="static" elevation={0}>
-            <Toolbar>
-              <Typography variant="h5" component="div" sx={{ flexGrow: 1, fontWeight: 600 }}>
-                Smart Life Manager
-              </Typography>
-            </Toolbar>
-          </AppBar>
-          
-          <Container maxWidth="xl" sx={{ mt: 3 }}>
-            <Box sx={{ 
-              display: 'flex', 
-              gap: 2, 
-              mb: 3, 
-              flexWrap: 'wrap',
-              justifyContent: 'center'
-            }}>
-              <a href="#/" style={{ textDecoration: 'none' }}>
-                <Box sx={{ 
-                  p: 2, 
-                  bgcolor: 'primary.main', 
-                  color: 'primary.contrastText', 
-                  borderRadius: 1, 
-                  '&:hover': { bgcolor: 'primary.dark' },
-                  transition: 'background-color 250ms cubic-bezier(0.16, 1, 0.3, 1)',
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: 1
-                }}>
-                  <DashboardIcon sx={{ fontSize: 20 }} />
-                  Dashboard
-                </Box>
-              </a>
-              <a href="#/tasks" style={{ textDecoration: 'none' }}>
-                <Box sx={{ 
-                  p: 2, 
-                  bgcolor: 'warning.main', 
-                  color: 'white', 
-                  borderRadius: 1, 
-                  '&:hover': { bgcolor: 'warning.dark' },
-                  transition: 'background-color 250ms cubic-bezier(0.16, 1, 0.3, 1)',
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: 1
-                }}>
-                  <TaskAlt sx={{ fontSize: 20 }} />
-                  Tasks
-                </Box>
-              </a>
-              <a href="#/notes" style={{ textDecoration: 'none' }}>
-                <Box sx={{ 
-                  p: 2, 
-                  bgcolor: 'success.main', 
-                  color: 'white', 
-                  borderRadius: 1, 
-                  '&:hover': { bgcolor: 'success.dark' },
-                  transition: 'background-color 250ms cubic-bezier(0.16, 1, 0.3, 1)',
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: 1
-                }}>
-                  <Note sx={{ fontSize: 20 }} />
-                  Notes
-                </Box>
-              </a>
-              <a href="#/goals" style={{ textDecoration: 'none' }}>
-                <Box sx={{ 
-                  p: 2, 
-                  bgcolor: 'secondary.main', 
-                  color: 'secondary.contrastText', 
-                  borderRadius: 1, 
-                  '&:hover': { bgcolor: 'secondary.dark' },
-                  transition: 'background-color 250ms cubic-bezier(0.16, 1, 0.3, 1)',
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: 1
-                }}>
-                  <Flag sx={{ fontSize: 20 }} />
-                  Goals
-                </Box>
-              </a>
-              <a href="#/health" style={{ textDecoration: 'none' }}>
-                <Box sx={{ 
-                  p: 2, 
-                  bgcolor: 'error.main', 
-                  color: 'white', 
-                  borderRadius: 1, 
-                  '&:hover': { bgcolor: 'error.dark' },
-                  transition: 'background-color 250ms cubic-bezier(0.16, 1, 0.3, 1)',
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: 1
-                }}>
-                  <Favorite sx={{ fontSize: 20 }} />
-                  Health
-                </Box>
-              </a>
-              <a href="#/finance" style={{ textDecoration: 'none' }}>
-                <Box sx={{ 
-                  p: 2, 
-                  bgcolor: 'info.main', 
-                  color: 'white', 
-                  borderRadius: 1, 
-                  '&:hover': { bgcolor: 'info.dark' },
-                  transition: 'background-color 250ms cubic-bezier(0.16, 1, 0.3, 1)',
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: 1
-                }}>
-                  <AccountBalance sx={{ fontSize: 20 }} />
-                  Finance
-                </Box>
-              </a>
-            </Box>
-            
-            <Routes>
-              <Route path="/" element={<Dashboard />} />
-              <Route path="/tasks" element={<TaskManager />} />
-              <Route path="/notes" element={<Notes />} />
-              <Route path="/goals" element={<Goals />} />
-              <Route path="/health" element={<Health />} />
-              <Route path="/finance" element={<Finance />} />
-            </Routes>
-          </Container>
-        </Box>
-      </Router>
+      <AuthProvider>
+        <Router>
+          <Routes>
+            <Route path="/login" element={<AuthPages />} />
+            <Route path="/register" element={<AuthPages />} />
+            <Route path="/*" element={
+              <ProtectedRoute>
+                <AppLayout />
+              </ProtectedRoute>
+            } />
+          </Routes>
+        </Router>
+      </AuthProvider>
     </ThemeProvider>
   );
 }
