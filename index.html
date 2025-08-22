@@ -1,0 +1,403 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>智慧生活管理 App</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="nav">
+        <div class="nav-container">
+            <h1 class="nav-title">智慧生活管理</h1>
+            <div class="nav-controls">
+                <button class="btn btn--sm btn--outline" id="langToggle">EN</button>
+                <button class="btn btn--sm btn--outline" id="themeToggle">🌙</button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Container -->
+    <div class="container main-container">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <ul class="sidebar-nav">
+                <li><button class="sidebar-btn active" data-section="dashboard">📊 主儀表板</button></li>
+                <li><button class="sidebar-btn" data-section="goals">🎯 年度目標</button></li>
+                <li><button class="sidebar-btn" data-section="tasks">📝 任務管理</button></li>
+                <li><button class="sidebar-btn" data-section="health">💪 健康管理</button></li>
+                <li><button class="sidebar-btn" data-section="work">💼 工作專區</button></li>
+                <li><button class="sidebar-btn" data-section="learning">📚 學習專區</button></li>
+                <li><button class="sidebar-btn" data-section="finance">💰 財務管理</button></li>
+                <li><button class="sidebar-btn" data-section="life">🌟 生活增強</button></li>
+            </ul>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Dashboard Section -->
+            <section id="dashboard" class="section active">
+                <div class="section-header">
+                    <h2>今日概覽</h2>
+                    <div class="quick-actions">
+                        <button class="btn btn--sm btn--primary" id="quickAddTask">+ 新增任務</button>
+                        <button class="btn btn--sm btn--secondary" id="quickAddNote">+ 快速筆記</button>
+                    </div>
+                </div>
+
+                <div class="dashboard-grid">
+                    <!-- Today's Tasks -->
+                    <div class="card dashboard-card">
+                        <div class="card__body">
+                            <h3>今日重點任務</h3>
+                            <div id="todayTasks" class="task-list">
+                                <!-- Tasks will be populated by JS -->
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Progress Overview -->
+                    <div class="card dashboard-card">
+                        <div class="card__body">
+                            <h3>本週進度概覽</h3>
+                            <div class="progress-container" style="position: relative; height: 200px;">
+                                <canvas id="progressChart"></canvas>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Habits Tracker -->
+                    <div class="card dashboard-card">
+                        <div class="card__body">
+                            <h3>習慣追蹤</h3>
+                            <div id="habitsTracker">
+                                <!-- Habits will be populated by JS -->
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- AI Suggestions -->
+                    <div class="card dashboard-card">
+                        <div class="card__body">
+                            <h3>🤖 智能建議</h3>
+                            <div id="aiSuggestions">
+                                <div class="suggestion-item">
+                                    <p>基於您的運動記錄，建議今天進行30分鐘的有氧運動</p>
+                                </div>
+                                <div class="suggestion-item">
+                                    <p>您有3個任務即將到期，建議優先完成「月度報告」</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Goals Section -->
+            <section id="goals" class="section">
+                <div class="section-header">
+                    <h2>年度目標追蹤</h2>
+                    <button class="btn btn--primary" id="addGoal">新增目標</button>
+                </div>
+                <div class="goals-grid">
+                    <div id="goalsList">
+                        <!-- Goals will be populated by JS -->
+                    </div>
+                </div>
+            </section>
+
+            <!-- Tasks Section -->
+            <section id="tasks" class="section">
+                <div class="section-header">
+                    <h2>任務管理</h2>
+                    <div class="task-filters">
+                        <select id="taskFilter" class="form-control">
+                            <option value="all">所有任務</option>
+                            <option value="today">今日</option>
+                            <option value="week">本週</option>
+                            <option value="overdue">逾期</option>
+                        </select>
+                        <button class="btn btn--primary" id="addTask">新增任務</button>
+                    </div>
+                </div>
+                <div class="tasks-container">
+                    <div id="tasksList">
+                        <!-- Tasks will be populated by JS -->
+                    </div>
+                </div>
+            </section>
+
+            <!-- Health Section -->
+            <section id="health" class="section">
+                <div class="section-header">
+                    <h2>健康管理</h2>
+                    <div class="health-actions">
+                        <button class="btn btn--primary" id="addWorkout">記錄運動</button>
+                        <button class="btn btn--secondary" id="addMeal">記錄飲食</button>
+                    </div>
+                </div>
+                <div class="health-grid">
+                    <div class="card">
+                        <div class="card__body">
+                            <h3>運動統計</h3>
+                            <div class="chart-container" style="position: relative; height: 300px;">
+                                <canvas id="workoutChart"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <div class="card__body">
+                            <h3>最近運動記錄</h3>
+                            <div id="recentWorkouts">
+                                <!-- Workouts will be populated by JS -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Work Section -->
+            <section id="work" class="section">
+                <div class="section-header">
+                    <h2>工作專區</h2>
+                    <div class="work-actions">
+                        <button class="btn btn--primary" id="addMeeting">會議筆記</button>
+                        <button class="btn btn--secondary" id="addWorkNote">工作筆記</button>
+                    </div>
+                </div>
+                <div class="work-grid">
+                    <div class="card">
+                        <div class="card__body">
+                            <h3>最近筆記</h3>
+                            <div id="recentNotes">
+                                <div class="note-item">
+                                    <h4>團隊會議 - 2025/08/21</h4>
+                                    <p>討論了Q3目標與新專案規劃...</p>
+                                    <span class="status status--info">會議筆記</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <div class="card__body">
+                            <h3>行動清單</h3>
+                            <div id="actionItems">
+                                <div class="action-item">
+                                    <p>📋 準備專案提案簡報</p>
+                                    <span class="action-date">期限: 8/25</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Learning Section -->
+            <section id="learning" class="section">
+                <div class="section-header">
+                    <h2>學習專區</h2>
+                    <button class="btn btn--primary" id="addLearning">新增學習計畫</button>
+                </div>
+                <div class="learning-grid">
+                    <div class="card">
+                        <div class="card__body">
+                            <h3>學習進度</h3>
+                            <div class="learning-progress">
+                                <div class="progress-item">
+                                    <span>JavaScript 進階課程</span>
+                                    <div class="progress-bar">
+                                        <div class="progress-fill" style="width: 75%;"></div>
+                                    </div>
+                                    <span>75%</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <div class="card__body">
+                            <h3>即將考試</h3>
+                            <div id="upcomingExams">
+                                <div class="exam-item">
+                                    <h4>AWS 認證考試</h4>
+                                    <p>剩餘 15 天</p>
+                                    <div class="exam-prep">準備進度: 60%</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Finance Section -->
+            <section id="finance" class="section">
+                <div class="section-header">
+                    <h2>財務管理</h2>
+                    <div class="finance-actions">
+                        <button class="btn btn--primary" id="addExpense">記錄支出</button>
+                        <button class="btn btn--secondary" id="addIncome">記錄收入</button>
+                    </div>
+                </div>
+                <div class="finance-grid">
+                    <div class="card">
+                        <div class="card__body">
+                            <h3>本月支出分析</h3>
+                            <div class="chart-container" style="position: relative; height: 300px;">
+                                <canvas id="expenseChart"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <div class="card__body">
+                            <h3>財務概覽</h3>
+                            <div class="finance-summary">
+                                <div class="summary-item">
+                                    <span>本月收入</span>
+                                    <span class="amount positive">+$45,000</span>
+                                </div>
+                                <div class="summary-item">
+                                    <span>本月支出</span>
+                                    <span class="amount negative">-$32,000</span>
+                                </div>
+                                <div class="summary-item">
+                                    <span>結餘</span>
+                                    <span class="amount positive">+$13,000</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Life Enhancement Section -->
+            <section id="life" class="section">
+                <div class="section-header">
+                    <h2>生活增強</h2>
+                    <button class="btn btn--primary" id="addVision">新增願景</button>
+                </div>
+                <div class="life-grid">
+                    <div class="card">
+                        <div class="card__body">
+                            <h3>願景板</h3>
+                            <div id="visionBoard" class="vision-grid">
+                                <div class="vision-item">
+                                    <div class="vision-placeholder">🏡</div>
+                                    <p>買房子</p>
+                                </div>
+                                <div class="vision-item">
+                                    <div class="vision-placeholder">✈️</div>
+                                    <p>環遊世界</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <div class="card__body">
+                            <h3>書影音清單</h3>
+                            <div id="mediaList">
+                                <div class="media-item">
+                                    <span>📚 原子習慣</span>
+                                    <span class="status status--success">已讀</span>
+                                </div>
+                                <div class="media-item">
+                                    <span>🎬 天能</span>
+                                    <span class="status status--info">想看</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <!-- Modals -->
+    <!-- Quick Task Modal -->
+    <div id="taskModal" class="modal hidden">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>新增任務</h3>
+                <button class="modal-close" id="closeTaskModal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="taskForm">
+                    <div class="form-group">
+                        <label class="form-label">任務名稱</label>
+                        <input type="text" id="taskTitle" class="form-control" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">優先級</label>
+                        <select id="taskPriority" class="form-control">
+                            <option value="低">低</option>
+                            <option value="中" selected>中</option>
+                            <option value="高">高</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">分類</label>
+                        <select id="taskCategory" class="form-control">
+                            <option value="工作">工作</option>
+                            <option value="個人">個人</option>
+                            <option value="學習">學習</option>
+                            <option value="健康">健康</option>
+                            <option value="家庭">家庭</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">截止日期</label>
+                        <input type="date" id="taskDueDate" class="form-control">
+                    </div>
+                    <div class="modal-actions">
+                        <button type="button" class="btn btn--secondary" id="cancelTask">取消</button>
+                        <button type="submit" class="btn btn--primary">儲存</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Workout Modal -->
+    <div id="workoutModal" class="modal hidden">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>記錄運動</h3>
+                <button class="modal-close" id="closeWorkoutModal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="workoutForm">
+                    <div class="form-group">
+                        <label class="form-label">運動類型</label>
+                        <select id="workoutType" class="form-control">
+                            <option value="跑步">跑步</option>
+                            <option value="游泳">游泳</option>
+                            <option value="重量訓練">重量訓練</option>
+                            <option value="瑜伽">瑜伽</option>
+                            <option value="騎自行車">騎自行車</option>
+                            <option value="健走">健走</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">時長（分鐘）</label>
+                        <input type="number" id="workoutDuration" class="form-control" min="1" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">強度</label>
+                        <select id="workoutIntensity" class="form-control">
+                            <option value="低">低</option>
+                            <option value="中等" selected>中等</option>
+                            <option value="高">高</option>
+                        </select>
+                    </div>
+                    <div class="modal-actions">
+                        <button type="button" class="btn btn--secondary" id="cancelWorkout">取消</button>
+                        <button type="submit" class="btn btn--primary">儲存</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>
