@@ -4,20 +4,21 @@
  */
 
 const app = require('./app');
-const connectDB = require('./config/database');
+const { initializeStorage } = require('./config/database');
 
 const PORT = process.env.PORT || 5000;
 
-// Connect to database and start server
+// Initialize storage and start server
 const startServer = async () => {
   try {
-    // Connect to MongoDB
-    await connectDB();
+    // Initialize in-memory storage
+    initializeStorage();
     
     // Start server
     app.listen(PORT, () => {
       console.log(`🚀 Server running on port ${PORT}`);
       console.log(`🌐 URL: http://localhost:${PORT}`);
+      console.log(`📦 Using in-memory storage (no database required)`);
     });
   } catch (error) {
     console.error('❌ Failed to start server:', error);

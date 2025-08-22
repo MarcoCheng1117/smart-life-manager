@@ -1,148 +1,101 @@
-const mongoose = require('mongoose');
-
 /**
- * Connect to MongoDB database
- * Uses environment variables for configuration
+ * In-Memory Storage Configuration
+ * Replaces MongoDB with local cookie-based storage
  */
-const connectDB = async () => {
-  try {
-    // Get MongoDB URI from environment variables
-    const mongoURI = process.env.MONGODB_URI || 'mongodb://localhost:27017/smart-life-manager';
-    
-    // MongoDB connection options
-    const options = {
-      useNewUrlParser: true,
-      useUnifiedTopology: true,
-      maxPoolSize: 10, // Maintain up to 10 socket connections
-      serverSelectionTimeoutMS: 5000, // Keep trying to send operations for 5 seconds
-      socketTimeoutMS: 45000, // Close sockets after 45 seconds of inactivity
-      bufferMaxEntries: 0, // Disable mongoose buffering
-      bufferCommands: false, // Disable mongoose buffering
-    };
 
-    // Connect to MongoDB
-    const conn = await mongoose.connect(mongoURI, options);
-
-    console.log(`✅ MongoDB Connected: ${conn.connection.host}`);
-    console.log(`📊 Database: ${conn.connection.name}`);
-    console.log(`🔌 Port: ${conn.connection.port}`);
-
-    // Handle connection events
-    mongoose.connection.on('connected', () => {
-      console.log('🎉 Mongoose connected to MongoDB');
-    });
-
-    mongoose.connection.on('error', (err) => {
-      console.error('❌ Mongoose connection error:', err);
-    });
-
-    mongoose.connection.on('disconnected', () => {
-      console.log('🔌 Mongoose disconnected from MongoDB');
-    });
-
-    // Graceful shutdown
-    process.on('SIGINT', async () => {
-      try {
-        await mongoose.connection.close();
-        console.log('✅ MongoDB connection closed through app termination');
-        process.exit(0);
-      } catch (err) {
-        console.error('❌ Error closing MongoDB connection:', err);
-        process.exit(1);
-      }
-    });
-
-  } catch (error) {
-    console.error('❌ Database connection failed:', error.message);
-    
-    // Exit process with failure
-    process.exit(1);
-  }
+// In-memory storage for development/testing
+const memoryStorage = {
+  users: new Map(),
+  tasks: new Map(),
+  goals: new Map(),
+  health: new Map(),
+  finance: new Map(),
+  notes: new Map()
 };
 
 /**
- * Disconnect from MongoDB database
- * Useful for testing or graceful shutdown
+ * Initialize storage system
  */
-const disconnectDB = async () => {
-  try {
-    await mongoose.connection.close();
-    console.log('✅ MongoDB connection closed successfully');
-  } catch (error) {
-    console.error('❌ Error closing MongoDB connection:', error.message);
-    throw error;
-  }
+const initializeStorage = () => {
+  console.log('📦 Initializing in-memory storage system');
+  
+  // Add some sample data for testing
+  const sampleUser = {
+    id: '1',
+    email: 'demo@example.com',
+    name: 'Demo User',
+    createdAt: new Date().toISOString()
+  };
+  
+  memoryStorage.users.set('1', sampleUser);
+  
+  console.log('✅ In-memory storage initialized');
+  return true;
 };
 
 /**
- * Get database connection status
- * @returns {Object} Connection status information
+ * Get storage status
  */
-const getDBStatus = () => {
-  const connection = mongoose.connection;
+const getStorageStatus = () => {
   return {
-    readyState: connection.readyState,
-    host: connection.host,
-    port: connection.port,
-    name: connection.name,
-    isConnected: connection.readyState === 1,
-    readyStateText: getReadyStateText(connection.readyState),
+    type: 'in-memory',
+    status: 'connected',
+    collections: Object.keys(memoryStorage),
+    userCount: memoryStorage.users.size,
+    taskCount: memoryStorage.tasks.size,
+    goalCount: memoryStorage.goals.size,
+    healthCount: memoryStorage.health.size,
+    financeCount: memoryStorage.finance.size,
+    noteCount: memoryStorage.notes.size
   };
 };
 
 /**
- * Convert MongoDB ready state to human-readable text
- * @param {number} readyState - MongoDB connection ready state
- * @returns {string} Human-readable connection state
+ * Check if storage is ready
  */
-const getReadyStateText = (readyState) => {
-  const states = {
-    0: 'disconnected',
-    1: 'connected',
-    2: 'connecting',
-    3: 'disconnecting',
+const isStorageReady = () => {
+  return true; // Always ready for in-memory storage
+};
+
+/**
+ * Get storage statistics
+ */
+const getStorageStats = () => {
+  return {
+    totalUsers: memoryStorage.users.size,
+    totalTasks: memoryStorage.tasks.size,
+    totalGoals: memoryStorage.goals.size,
+    totalHealth: memoryStorage.health.size,
+    totalFinance: memoryStorage.finance.size,
+    totalNotes: memoryStorage.notes.size,
+    memoryUsage: process.memoryUsage(),
+    uptime: process.uptime()
   };
-  return states[readyState] || 'unknown';
 };
 
 /**
- * Check if database is ready for operations
- * @returns {boolean} True if database is ready
+ * Clear all data (for testing)
  */
-const isDBReady = () => {
-  return mongoose.connection.readyState === 1;
+const clearStorage = () => {
+  memoryStorage.users.clear();
+  memoryStorage.tasks.clear();
+  memoryStorage.goals.clear();
+  memoryStorage.health.clear();
+  memoryStorage.finance.clear();
+  memoryStorage.notes.clear();
+  console.log('🗑️ Storage cleared');
 };
 
 /**
- * Get database statistics
- * @returns {Promise<Object>} Database statistics
+ * Export storage instance for use in other modules
  */
-const getDBStats = async () => {
-  try {
-    if (!isDBReady()) {
-      throw new Error('Database not connected');
-    }
-
-    const stats = await mongoose.connection.db.stats();
-    return {
-      collections: stats.collections,
-      dataSize: stats.dataSize,
-      storageSize: stats.storageSize,
-      indexes: stats.indexes,
-      indexSize: stats.indexSize,
-      avgObjSize: stats.avgObjSize,
-      objects: stats.objects,
-    };
-  } catch (error) {
-    console.error('Error getting database stats:', error.message);
-    throw error;
-  }
-};
+const getStorage = () => memoryStorage;
 
 module.exports = {
-  connectDB,
-  disconnectDB,
-  getDBStatus,
-  isDBReady,
-  getDBStats,
+  initializeStorage,
+  getStorageStatus,
+  isStorageReady,
+  getStorageStats,
+  clearStorage,
+  getStorage
 }; 

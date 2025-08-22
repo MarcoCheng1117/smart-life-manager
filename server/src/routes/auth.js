@@ -1,405 +1,203 @@
 const express = require('express');
-const router = express.Router();
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
-const User = require('../models/User');
+const { body, validationResult } = require('express-validator');
+const { getStorage } = require('../config/database');
 
-// Import middleware
-const { protect } = require('../middlewares/auth');
-const { 
-  validateUserRegistration, 
-  validateUserLogin, 
-  validateProfileUpdate, 
-  validatePasswordChange 
-} = require('../middlewares/validation');
-const { authLimiter, passwordResetLimiter } = require('../middlewares/rateLimit');
-const { asyncHandler } = require('../middlewares/errorHandler');
+const router = express.Router();
 
-/**
- * @route   POST /api/auth/register
- * @desc    Register a new user
- * @access  Public
- */
-router.post('/register', 
-  authLimiter,
-  validateUserRegistration,
-  asyncHandler(async (req, res) => {
-    const { email, password, firstName, lastName, ...otherFields } = req.body;
+// Get storage instance
+const storage = getStorage();
+
+// Validation middleware
+const validateUserRegistration = [
+  body('email').isEmail().normalizeEmail(),
+  body('password').isLength({ min: 6 }),
+  body('name').trim().isLength({ min: 2 })
+];
+
+const validateUserLogin = [
+  body('email').isEmail().normalizeEmail(),
+  body('password').notEmpty()
+];
+
+// Helper function to handle validation errors
+const handleValidationErrors = (req, res, next) => {
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    return res.status(400).json({
+      success: false,
+      error: 'Validation failed',
+      details: errors.array()
+    });
+  }
+  next();
+};
+
+// Register new user
+router.post('/register', validateUserRegistration, handleValidationErrors, async (req, res) => {
+  try {
+    const { email, password, name } = req.body;
 
     // Check if user already exists
-    const existingUser = await User.findOne({ email: email.toLowerCase() });
+    const existingUser = Array.from(storage.users.values()).find(user => user.email === email);
     if (existingUser) {
       return res.status(400).json({
         success: false,
-        error: 'User with this email already exists',
-        code: 'USER_EXISTS'
+        error: 'User already exists'
       });
     }
 
     // Hash password
-    const salt = await bcrypt.genSalt(12);
-    const hashedPassword = await bcrypt.hash(password, salt);
+    const saltRounds = 10;
+    const hashedPassword = await bcrypt.hash(password, saltRounds);
 
-    // Create user
-    const user = await User.create({
-      email: email.toLowerCase(),
+    // Create new user
+    const newUser = {
+      id: Date.now().toString(),
+      email,
+      name,
       password: hashedPassword,
-      firstName,
-      lastName,
-      ...otherFields
-    });
+      createdAt: new Date().toISOString(),
+      isActive: true
+    };
+
+    // Store user
+    storage.users.set(newUser.id, newUser);
 
     // Generate JWT token
     const token = jwt.sign(
-      { id: user._id },
-      process.env.JWT_SECRET,
-      { 
-        expiresIn: process.env.JWT_EXPIRE || '24h',
-        issuer: 'smart-life-manager',
-        audience: 'smart-life-manager-users'
-      }
+      { id: newUser.id, email: newUser.email },
+      process.env.JWT_SECRET || 'your-secret-key',
+      { expiresIn: '24h' }
     );
 
-    // Update login count and last login
-    user.loginCount = 1;
-    user.lastLogin = new Date();
-    await user.save();
+    // Set cookie
+    res.cookie('token', token, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'strict',
+      maxAge: 24 * 60 * 60 * 1000 // 24 hours
+    });
 
-    // Return user data (without password) and token
-    const userResponse = user.getPublicProfile();
-
+    // Return user data (without password)
+    const { password: _, ...userData } = newUser;
     res.status(201).json({
       success: true,
-      data: {
-        user: userResponse,
-        token
-      },
-      message: 'User registered successfully'
+      message: 'User registered successfully',
+      user: userData,
+      token
     });
-  })
-);
 
-/**
- * @route   POST /api/auth/login
- * @desc    Authenticate user & get token
- * @access  Public
- */
-router.post('/login',
-  authLimiter,
-  validateUserLogin,
-  asyncHandler(async (req, res) => {
+  } catch (error) {
+    console.error('Registration error:', error);
+    res.status(500).json({
+      success: false,
+      error: 'Registration failed'
+    });
+  }
+});
+
+// Login user
+router.post('/login', validateUserLogin, handleValidationErrors, async (req, res) => {
+  try {
     const { email, password } = req.body;
 
-    // Find user by email
-    const user = await User.findOne({ email: email.toLowerCase() });
-    if (!user) {
+    // Find user
+    const user = Array.from(storage.users.values()).find(u => u.email === email);
+    if (!user || !user.isActive) {
       return res.status(401).json({
         success: false,
-        error: 'Invalid credentials',
-        code: 'INVALID_CREDENTIALS'
-      });
-    }
-
-    // Check if user is active
-    if (!user.isActive) {
-      return res.status(401).json({
-        success: false,
-        error: 'Account is deactivated',
-        code: 'ACCOUNT_DEACTIVATED'
+        error: 'Invalid credentials'
       });
     }
 
     // Check password
-    const isMatch = await bcrypt.compare(password, user.password);
-    if (!isMatch) {
+    const isValidPassword = await bcrypt.compare(password, user.password);
+    if (!isValidPassword) {
       return res.status(401).json({
         success: false,
-        error: 'Invalid credentials',
-        code: 'INVALID_CREDENTIALS'
+        error: 'Invalid credentials'
       });
     }
 
     // Generate JWT token
     const token = jwt.sign(
-      { id: user._id },
-      process.env.JWT_SECRET,
-      { 
-        expiresIn: process.env.JWT_EXPIRE || '24h',
-        issuer: 'smart-life-manager',
-        audience: 'smart-life-manager-users'
-      }
+      { id: user.id, email: user.email },
+      process.env.JWT_SECRET || 'your-secret-key',
+      { expiresIn: '24h' }
     );
 
-    // Update login count and last login
-    user.loginCount += 1;
-    user.lastLogin = new Date();
-    await user.save();
+    // Set cookie
+    res.cookie('token', token, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'strict',
+      maxAge: 24 * 60 * 60 * 1000 // 24 hours
+    });
 
-    // Return user data (without password) and token
-    const userResponse = user.getPublicProfile();
-
+    // Return user data (without password)
+    const { password: _, ...userData } = user;
     res.json({
       success: true,
-      data: {
-        user: userResponse,
-        token
-      },
-      message: 'Login successful'
+      message: 'Login successful',
+      user: userData,
+      token
     });
-  })
-);
 
-/**
- * @route   GET /api/auth/me
- * @desc    Get current user profile
- * @access  Private
- */
-router.get('/me',
-  protect,
-  asyncHandler(async (req, res) => {
-    const user = await User.findById(req.user._id).select('-password');
+  } catch (error) {
+    console.error('Login error:', error);
+    res.status(500).json({
+      success: false,
+      error: 'Login failed'
+    });
+  }
+});
+
+// Get current user
+router.get('/me', (req, res) => {
+  try {
+    const token = req.cookies.token || req.headers.authorization?.split(' ')[1];
     
-    if (!user) {
-      return res.status(404).json({
+    if (!token) {
+      return res.status(401).json({
         success: false,
-        error: 'User not found',
-        code: 'USER_NOT_FOUND'
+        error: 'No token provided'
       });
     }
 
+    const decoded = jwt.verify(token, process.env.JWT_SECRET || 'your-secret-key');
+    const user = storage.users.get(decoded.id);
+
+    if (!user || !user.isActive) {
+      return res.status(401).json({
+        success: false,
+        error: 'User not found'
+      });
+    }
+
+    const { password: _, ...userData } = user;
     res.json({
       success: true,
-      data: {
-        user: user.getPublicProfile()
-      }
-    });
-  })
-);
-
-/**
- * @route   PUT /api/auth/profile
- * @desc    Update user profile
- * @access  Private
- */
-router.put('/profile',
-  protect,
-  validateProfileUpdate,
-  asyncHandler(async (req, res) => {
-    const user = await User.findById(req.user._id);
-    
-    if (!user) {
-      return res.status(404).json({
-        success: false,
-        error: 'User not found',
-        code: 'USER_NOT_FOUND'
-      });
-    }
-
-    // Update fields
-    const updateFields = ['firstName', 'lastName', 'phone', 'dateOfBirth', 'profile'];
-    updateFields.forEach(field => {
-      if (req.body[field] !== undefined) {
-        if (field === 'profile') {
-          user.profile = { ...user.profile, ...req.body.profile };
-        } else {
-          user[field] = req.body[field];
-        }
-      }
+      user: userData
     });
 
-    // Update preferences if provided
-    if (req.body.preferences) {
-      user.preferences = { ...user.preferences, ...req.body.preferences };
-    }
-
-    await user.save();
-
-    res.json({
-      success: true,
-      data: {
-        user: user.getPublicProfile()
-      },
-      message: 'Profile updated successfully'
+  } catch (error) {
+    console.error('Auth error:', error);
+    res.status(401).json({
+      success: false,
+      error: 'Invalid token'
     });
-  })
-);
+  }
+});
 
-/**
- * @route   PUT /api/auth/password
- * @desc    Change user password
- * @access  Private
- */
-router.put('/password',
-  protect,
-  validatePasswordChange,
-  asyncHandler(async (req, res) => {
-    const { currentPassword, newPassword } = req.body;
-    const user = await User.findById(req.user._id);
-
-    if (!user) {
-      return res.status(404).json({
-        success: false,
-        error: 'User not found',
-        code: 'USER_NOT_FOUND'
-      });
-    }
-
-    // Verify current password
-    const isMatch = await bcrypt.compare(currentPassword, user.password);
-    if (!isMatch) {
-      return res.status(400).json({
-        success: false,
-        error: 'Current password is incorrect',
-        code: 'INCORRECT_PASSWORD'
-      });
-    }
-
-    // Hash new password
-    const salt = await bcrypt.genSalt(12);
-    const hashedPassword = await bcrypt.hash(newPassword, salt);
-
-    // Update password
-    user.password = hashedPassword;
-    await user.save();
-
-    res.json({
-      success: true,
-      message: 'Password changed successfully'
-    });
-  })
-);
-
-/**
- * @route   POST /api/auth/logout
- * @desc    Logout user (client-side token removal)
- * @access  Private
- */
-router.post('/logout',
-  protect,
-  asyncHandler(async (req, res) => {
-    // Note: JWT tokens are stateless, so we can't invalidate them server-side
-    // The client should remove the token from storage
-    // This endpoint is mainly for logging purposes
-
-    res.json({
-      success: true,
-      message: 'Logged out successfully'
-    });
-  })
-);
-
-/**
- * @route   POST /api/auth/refresh
- * @desc    Refresh JWT token
- * @access  Private
- */
-router.post('/refresh',
-  protect,
-  asyncHandler(async (req, res) => {
-    const user = await User.findById(req.user._id);
-    
-    if (!user) {
-      return res.status(404).json({
-        success: false,
-        error: 'User not found',
-        code: 'USER_NOT_FOUND'
-      });
-    }
-
-    // Generate new token
-    const token = jwt.sign(
-      { id: user._id },
-      process.env.JWT_SECRET,
-      { 
-        expiresIn: process.env.JWT_EXPIRE || '24h',
-        issuer: 'smart-life-manager',
-        audience: 'smart-life-manager-users'
-      }
-    );
-
-    res.json({
-      success: true,
-      data: {
-        token,
-        expiresIn: process.env.JWT_EXPIRE || '24h'
-      },
-      message: 'Token refreshed successfully'
-    });
-  })
-);
-
-/**
- * @route   POST /api/auth/forgot-password
- * @desc    Send password reset email
- * @access  Public
- */
-router.post('/forgot-password',
-  passwordResetLimiter,
-  asyncHandler(async (req, res) => {
-    const { email } = req.body;
-
-    if (!email) {
-      return res.status(400).json({
-        success: false,
-        error: 'Email is required',
-        code: 'EMAIL_REQUIRED'
-      });
-    }
-
-    // Find user by email
-    const user = await User.findOne({ email: email.toLowerCase() });
-    
-    // For security reasons, always return success even if email doesn't exist
-    // This prevents email enumeration attacks
-    
-    if (user) {
-      // TODO: Implement email sending logic
-      // For now, just log the request
-      console.log(`Password reset requested for: ${email}`);
-    }
-
-    res.json({
-      success: true,
-      message: 'Password reset email sent'
-    });
-  })
-);
-
-/**
- * @route   POST /api/auth/reset-password
- * @desc    Reset password using token
- * @access  Public
- */
-router.post('/reset-password',
-  passwordResetLimiter,
-  asyncHandler(async (req, res) => {
-    const { token, newPassword } = req.body;
-
-    if (!token || !newPassword) {
-      return res.status(400).json({
-        success: false,
-        error: 'Token and new password are required',
-        code: 'MISSING_FIELDS'
-      });
-    }
-
-    try {
-      // Verify reset token (this would be a separate reset token, not JWT)
-      // TODO: Implement proper reset token verification
-      
-      // For now, return success
-      res.json({
-        success: true,
-        message: 'Password reset successfully'
-      });
-    } catch (error) {
-      res.status(400).json({
-        success: false,
-        error: 'Invalid or expired reset token',
-        code: 'INVALID_RESET_TOKEN'
-      });
-    }
-  })
-);
+// Logout user
+router.post('/logout', (req, res) => {
+  res.clearCookie('token');
+  res.json({
+    success: true,
+    message: 'Logout successful'
+  });
+});
 
 module.exports = router; 

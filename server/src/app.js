@@ -1,31 +1,13 @@
 const express = require('express');
-const mongoose = require('mongoose');
 const cors = require('cors');
 const helmet = require('helmet');
 const morgan = require('morgan');
 const compression = require('compression');
-const path = require('path');
+const cookieParser = require('cookie-parser');
+const rateLimit = require('express-rate-limit');
+const { errorHandler } = require('./middlewares/errorHandler');
 
-// Import middleware
-const { generalLimiter, authLimiter, rateLimitInfo } = require('./middlewares/rateLimit');
-const errorHandler = require('./middlewares/errorHandler');
-
-// Import routes
-const authRoutes = require('./routes/auth');
-const userRoutes = require('./routes/users');
-const taskRoutes = require('./routes/tasks');
-const goalRoutes = require('./routes/goals');
-const healthRoutes = require('./routes/health');
-const financeRoutes = require('./routes/finance');
-
-// Import database connection
-const connectDB = require('./config/database');
-
-// Initialize Express app
 const app = express();
-
-// Connect to MongoDB
-connectDB();
 
 // Security middleware
 app.use(helmet({
@@ -34,10 +16,10 @@ app.use(helmet({
       defaultSrc: ["'self'"],
       styleSrc: ["'self'", "'unsafe-inline'", "https://fonts.googleapis.com"],
       fontSrc: ["'self'", "https://fonts.gstatic.com"],
-      scriptSrc: ["'self'"],
       imgSrc: ["'self'", "data:", "https:"],
-      connectSrc: ["'self'", process.env.CLIENT_URL || "http://localhost:3000"]
-    }
+      scriptSrc: ["'self'"],
+      connectSrc: ["'self'"],
+    },
   },
   crossOriginEmbedderPolicy: false,
   crossOriginResourcePolicy: { policy: "cross-origin" }
@@ -45,66 +27,75 @@ app.use(helmet({
 
 // CORS configuration
 app.use(cors({
-  origin: process.env.CLIENT_URL || "http://localhost:3000",
+  origin: process.env.CLIENT_URL || 'http://localhost:3000',
   credentials: true,
-  methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH'],
-  allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With'],
   exposedHeaders: ['X-RateLimit-Limit', 'X-RateLimit-Remaining', 'X-RateLimit-Reset']
 }));
 
-// Trust proxy for rate limiting
+// Rate limiting
+const generalLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  max: 100, // limit each IP to 100 requests per windowMs
+  message: {
+    success: false,
+    error: 'Too many requests from this IP, please try again later.',
+    code: 'RATE_LIMIT_EXCEEDED'
+  },
+  standardHeaders: true,
+  legacyHeaders: false,
+});
+
+const authLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  max: 5, // limit each IP to 5 requests per windowMs
+  message: {
+    success: false,
+    error: 'Too many authentication attempts, please try again later.',
+    code: 'AUTH_RATE_LIMIT_EXCEEDED'
+  },
+  standardHeaders: true,
+  legacyHeaders: false,
+});
+
+// Trust proxy for accurate IP detection
 app.set('trust proxy', 1);
 
-// Rate limiting
+// Apply rate limiting
 app.use('/api/auth', authLimiter);
 app.use('/api', generalLimiter);
-app.use(rateLimitInfo);
 
 // Body parsing middleware
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 
+// Cookie parsing middleware
+app.use(cookieParser());
+
 // Compression middleware
 app.use(compression());
 
 // Logging middleware
-if (process.env.NODE_ENV === 'development') {
-  app.use(morgan('dev'));
-} else {
-  app.use(morgan('combined'));
-}
-
-// Static files (for production)
-if (process.env.NODE_ENV === 'production') {
-  app.use(express.static(path.join(__dirname, '../../client/build')));
-}
+app.use(morgan('combined'));
 
 // Health check endpoint
 app.get('/health', (req, res) => {
+  const { getStorageStatus } = require('./config/database');
   res.json({
-    status: 'OK',
+    success: true,
+    message: 'Server is healthy',
     timestamp: new Date().toISOString(),
     uptime: process.uptime(),
-    environment: process.env.NODE_ENV,
-    database: mongoose.connection.readyState === 1 ? 'connected' : 'disconnected',
-    version: process.env.npm_package_version || '1.0.0'
+    storage: getStorageStatus(),
+    version: '1.0.0'
   });
 });
 
-// API routes
-app.use('/api/auth', authRoutes);
-app.use('/api/users', userRoutes);
-app.use('/api/tasks', taskRoutes);
-app.use('/api/goals', goalRoutes);
-app.use('/api/health', healthRoutes);
-app.use('/api/finance', financeRoutes);
-
-// Root endpoint
+// API root endpoint
 app.get('/api', (req, res) => {
   res.json({
+    success: true,
     message: 'Smart Life Manager API',
-    version: process.env.npm_package_version || '1.0.0',
-    environment: process.env.NODE_ENV,
+    version: '1.0.0',
     timestamp: new Date().toISOString(),
     endpoints: {
       auth: '/api/auth',
@@ -112,16 +103,26 @@ app.get('/api', (req, res) => {
       tasks: '/api/tasks',
       goals: '/api/goals',
       health: '/api/health',
-      finance: '/api/finance'
-    }
+      finance: '/api/finance',
+      notes: '/api/notes'
+    },
+    storage: 'in-memory (cookies)',
+    documentation: '/api/docs'
   });
 });
 
-// Serve React app in production
+// API routes
+app.use('/api/auth', require('./routes/auth'));
+app.use('/api/users', require('./routes/users'));
+app.use('/api/tasks', require('./routes/tasks'));
+app.use('/api/goals', require('./routes/goals'));
+app.use('/api/health', require('./routes/health'));
+app.use('/api/finance', require('./routes/finance'));
+app.use('/api/notes', require('./routes/notes'));
+
+// Serve static files in production
 if (process.env.NODE_ENV === 'production') {
-  app.get('*', (req, res) => {
-    res.sendFile(path.join(__dirname, '../../client/build/index.html'));
-  });
+  app.use(express.static('client/build'));
 }
 
 // 404 handler
@@ -131,29 +132,12 @@ app.use('*', (req, res) => {
     error: 'Route not found',
     code: 'ROUTE_NOT_FOUND',
     path: req.originalUrl,
-    method: req.method
+    method: req.method,
+    timestamp: new Date().toISOString()
   });
 });
 
 // Global error handling middleware
 app.use(errorHandler);
 
-// Graceful shutdown
-process.on('SIGTERM', () => {
-  console.log('SIGTERM received, shutting down gracefully');
-  mongoose.connection.close(() => {
-    console.log('MongoDB connection closed');
-    process.exit(0);
-  });
-});
-
-process.on('SIGINT', () => {
-  console.log('SIGINT received, shutting down gracefully');
-  mongoose.connection.close(() => {
-    console.log('MongoDB connection closed');
-    process.exit(0);
-  });
-});
-
-module.exports = app; 
 module.exports = app; 
