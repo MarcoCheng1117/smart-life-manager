@@ -1,0 +1,38 @@
+{
+  "version": 2,
+  "name": "smart-life-manager",
+  "builds": [
+    {
+      "src": "server/src/server.js",
+      "use": "@vercel/node"
+    },
+    {
+      "src": "client/package.json",
+      "use": "@vercel/static-build",
+      "config": {
+        "distDir": "build"
+      }
+    }
+  ],
+  "routes": [
+    {
+      "src": "/api/(.*)",
+      "dest": "server/src/server.js"
+    },
+    {
+      "src": "/(.*)",
+      "dest": "client/$1"
+    }
+  ],
+  "env": {
+    "NODE_ENV": "production",
+    "MONGODB_URI": "@mongodb-uri",
+    "JWT_SECRET": "@jwt-secret",
+    "CLIENT_URL": "@client-url"
+  },
+  "functions": {
+    "server/src/server.js": {
+      "maxDuration": 30
+    }
+  }
+} 
