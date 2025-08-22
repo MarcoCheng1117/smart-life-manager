@@ -6,6 +6,7 @@
   "scripts": {
     "start": "node src/server.js",
     "dev": "nodemon src/server.js",
+    "build": "echo 'Server build complete'",
     "test": "jest",
     "test:watch": "jest --watch",
     "test:coverage": "jest --coverage",
@@ -54,23 +55,7 @@
     "hpp": "^0.2.3",
     "express-mongo-sanitize": "^2.2.0",
     "express-slow-down": "^1.6.0",
-    "express-brute": "^1.0.1",
-    "express-brute-redis": "^0.0.1",
-    "express-brute-mongo": "^0.0.1",
-    "express-brute-memory": "^0.0.1",
-    "express-brute-flexible": "^0.0.1",
-    "express-brute-sequelize": "^0.0.1",
-    "express-brute-knex": "^0.0.1",
-    "express-brute-bookshelf": "^0.0.1",
-    "express-brute-objection": "^0.0.1",
-    "express-brute-waterline": "^0.0.1",
-    "express-brute-mongoose": "^0.0.1",
-    "express-brute-sequelize": "^0.0.1",
-    "express-brute-knex": "^0.0.1",
-    "express-brute-bookshelf": "^0.0.1",
-    "express-brute-objection": "^0.0.1",
-    "express-brute-waterline": "^0.0.1",
-    "express-brute-mongoose": "^0.0.1"
+    "express-brute": "^1.0.1"
   },
   "devDependencies": {
     "nodemon": "^3.0.1",
