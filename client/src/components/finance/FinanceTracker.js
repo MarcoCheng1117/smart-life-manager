@@ -18,13 +18,7 @@ import {
   DialogContent,
   DialogActions,
   Paper,
-  List,
-  ListItem,
-  ListItemText,
-  ListItemIcon,
-  Divider,
-  Alert,
-  LinearProgress
+  Typography as MuiTypography
 } from '@mui/material';
 import {
   Add,
@@ -40,7 +34,7 @@ import {
   CreditCard,
   Receipt
 } from '@mui/icons-material';
-import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell, BarChart, Bar } from 'recharts';
+import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell } from 'recharts';
 import { backgroundColors } from '../../theme';
 
 const FinanceTracker = () => {
@@ -337,12 +331,6 @@ const FinanceTracker = () => {
                   </Typography>
                 </Box>
               </Box>
-              <LinearProgress
-                variant="determinate"
-                value={Math.min((stats.totalExpenses / Math.max(stats.totalIncome, 1)) * 100, 100)}
-                color={stats.totalExpenses > stats.totalIncome ? 'error' : 'warning'}
-                sx={{ height: 8, borderRadius: 4 }}
-              />
             </CardContent>
           </Card>
         </Grid>
@@ -428,12 +416,6 @@ const FinanceTracker = () => {
                         ${category.amount.toFixed(2)}
                       </Typography>
                     </Box>
-                    <LinearProgress
-                      variant="determinate"
-                      value={(category.amount / Math.max(stats.totalExpenses, 1)) * 100}
-                      color="error"
-                      sx={{ height: 6, borderRadius: 3, mt: 1 }}
-                    />
                   </Paper>
                 </Grid>
               ))}

@@ -18,14 +18,11 @@ import {
   DialogTitle,
   DialogContent,
   DialogActions,
-  TextareaAutosize,
-  Alert,
   Paper,
   List,
   ListItem,
   ListItemText,
-  ListItemIcon,
-  Divider
+  ListItemIcon
 } from '@mui/material';
 import {
   Add,
@@ -34,10 +31,8 @@ import {
   Flag,
   CheckCircle,
   Schedule,
-  TrendingUp,
   CalendarToday,
-  Category,
-  Description
+  Category
 } from '@mui/icons-material';
 import { backgroundColors } from '../../theme';
 
@@ -388,9 +383,9 @@ const GoalsManager = () => {
                         </Typography>
                       </Box>
                       {isOverdue(goal.targetDate) && (
-                        <Alert severity="error" sx={{ mt: 1 }}>
+                        <Typography variant="body2" color="error.main">
                           Overdue by {Math.abs(getDaysRemaining(goal.targetDate))} days
-                        </Alert>
+                        </Typography>
                       )}
                       {!isOverdue(goal.targetDate) && getDaysRemaining(goal.targetDate) !== null && (
                         <Typography variant="body2" color="warning.main">

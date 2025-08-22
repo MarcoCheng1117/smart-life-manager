@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import {
   Box,
   Grid,
@@ -6,9 +6,7 @@ import {
   CardContent,
   Typography,
   Button,
-  Chip,
   LinearProgress,
-  IconButton,
   Paper,
   List,
   ListItem,
@@ -45,11 +43,7 @@ const Dashboard = () => {
   const [quickActions, setQuickActions] = useState([]);
 
   // Load dashboard data from localStorage
-  useEffect(() => {
-    loadDashboardData();
-  }, []);
-
-  const loadDashboardData = () => {
+  const loadDashboardData = useCallback(() => {
     try {
       // Load tasks
       const tasks = JSON.parse(localStorage.getItem('smart-life-tasks') || '[]');
@@ -96,7 +90,11 @@ const Dashboard = () => {
     } catch (error) {
       console.error('Error loading dashboard data:', error);
     }
-  };
+  }, []);
+
+  useEffect(() => {
+    loadDashboardData();
+  }, [loadDashboardData]);
 
   const generateRecentActivity = (tasks, goals, notes, health, finance) => {
     const activities = [];

@@ -17,14 +17,7 @@ import {
   DialogTitle,
   DialogContent,
   DialogActions,
-  Paper,
-  List,
-  ListItem,
-  ListItemText,
-  ListItemIcon,
-  Divider,
-  Alert,
-  LinearProgress
+  Paper
 } from '@mui/material';
 import {
   Add,
@@ -33,14 +26,13 @@ import {
   Favorite,
   Restaurant,
   FitnessCenter,
-  TrendingUp,
   CalendarToday,
   Timer,
   LocalFireDepartment,
   Scale,
   WaterDrop
 } from '@mui/icons-material';
-import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, BarChart, Bar, Cell } from 'recharts';
+import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell } from 'recharts';
 import { backgroundColors } from '../../theme';
 
 const HealthTracker = () => {
