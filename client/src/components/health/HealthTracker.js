@@ -32,7 +32,7 @@ import {
   Scale,
   WaterDrop
 } from '@mui/icons-material';
-import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell } from 'recharts';
+import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 import { backgroundColors } from '../../theme';
 
 const HealthTracker = () => {

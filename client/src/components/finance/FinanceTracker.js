@@ -17,8 +17,7 @@ import {
   DialogTitle,
   DialogContent,
   DialogActions,
-  Paper,
-  Typography as MuiTypography
+  Paper
 } from '@mui/material';
 import {
   Add,
